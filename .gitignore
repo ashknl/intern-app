@@ -27,3 +27,4 @@ dist-electron
 .claude/*
 .agents/*
 data/*
+release/*
