@@ -1,6 +1,18 @@
 import { Link, Outlet, useMatchRoute } from '@tanstack/react-router';
-import { Button } from './ui/button';
-import { Separator } from './ui/separator';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarInset,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarProvider,
+    SidebarTrigger,
+} from './ui/sidebar';
 import { LayoutDashboard, PlusCircle, FileBarChart, FileText, Settings } from 'lucide-react';
 
 // Navigation config
@@ -16,41 +28,49 @@ export default function Layout() {
     const matchRoute = useMatchRoute();
 
     return (
-        <div className="flex h-screen bg-background text-foreground">
-            {/* Sidebar */}
-            <aside className="w-64 border-r flex flex-col p-4">
-                <h1 className="text-xl font-bold mb-6 px-2">My Electron App</h1>
+        <SidebarProvider>
+            <Sidebar>
+                <SidebarHeader>
+                    <h1 className="text-xl font-bold px-2">Intern App</h1>
+                </SidebarHeader>
+                <SidebarContent>
+                    <SidebarGroup>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {navItems.map((item) => {
+                                    const isActive = !!matchRoute({ to: item.to });
 
-                <nav className="flex flex-col gap-1 flex-1">
-                    {navItems.map((item) => {
-                        const isActive = matchRoute({ to: item.to });
-
-                        return (
-                            <Link key={item.to} to={item.to}>
-                                <Button
-                                    variant={isActive ? 'secondary' : 'ghost'}
-                                    className="w-full justify-start gap-2"
-                                >
-                                    <div>
-                                        <item.icon size={18} />
-                                        {item.label}
-                                    </div>
-                                </Button>
-                            </Link>
-                        );
-                    })}
-                </nav>
-
-                <Separator className="my-4" />
-                <div className="text-xs text-muted-foreground px-2">
-                    Electron + React + TanStack
-                </div>
-            </aside>
-
-            {/* Main Content Area */}
-            <main className="flex-1 p-6 overflow-auto">
-                <Outlet />
-            </main>
-        </div>
+                                    return (
+                                        <SidebarMenuItem key={item.to}>
+                                            <SidebarMenuButton isActive={isActive}>
+                                                <div className="flex gap-2">
+                                                    <item.icon />
+                                                    <Link to={item.to}>
+                                                        <span>{item.label}</span>
+                                                    </Link>
+                                                </div>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+                <SidebarFooter>
+                    <p className="text-xs text-muted-foreground px-2">
+                        Electron + React + TanStack
+                    </p>
+                </SidebarFooter>
+            </Sidebar>
+            <SidebarInset>
+                <header className="flex h-12 items-center px-4">
+                    <SidebarTrigger />
+                </header>
+                <main className="flex-1 p-6 overflow-auto">
+                    <Outlet />
+                </main>
+            </SidebarInset>
+        </SidebarProvider>
     );
 }

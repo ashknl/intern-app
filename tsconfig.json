@@ -32,7 +32,7 @@
   "include": [
     "src",
     "electron"
-, "lib"  ],
+, "src/lib"  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

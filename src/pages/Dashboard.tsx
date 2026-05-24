@@ -1,6 +1,9 @@
 import { LayoutDashboard } from 'lucide-react';
 
 export default function Dashboard() {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  console.log(window.ipcRenderer.node())
   return (
     <div>
       <h2 className="text-2xl font-bold flex items-center gap-2">
