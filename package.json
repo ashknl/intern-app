@@ -15,6 +15,8 @@
     "@tailwindcss/vite": "^4.3.0",
     "@tanstack/react-router": "^1.170.7",
     "@tanstack/react-router-devtools": "^1.167.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.16.0",

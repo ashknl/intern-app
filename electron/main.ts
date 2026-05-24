@@ -3,6 +3,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import xlsx from 'node-xlsx'
+import { getDb } from './db/index.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -66,7 +67,10 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  getDb()
+  createWindow()
+})
 
 ipcMain.handle('dialog:openFile', async () => {
   const result = await dialog.showOpenDialog(win!, {
