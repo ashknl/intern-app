@@ -1,11 +1,11 @@
 import { app } from 'electron'
-import Database from 'better-sqlite3'
+import { DatabaseSync } from 'node:sqlite'
 import path from 'node:path'
 import fs from 'node:fs'
 
-let db: Database.Database | null = null
+let db: DatabaseSync | null = null
 
-export function getDb(): Database.Database {
+export function getDb(): DatabaseSync {
   if (db) return db
 
   const dbPath = path.join(app.getPath('userData'), 'interns.db')
@@ -17,8 +17,8 @@ export function getDb(): Database.Database {
 
   const isFirstRun = !fs.existsSync(dbPath)
 
-  db = new Database(dbPath)
-  db.pragma('journal_mode = WAL')
+  db = new DatabaseSync(dbPath)
+  db.exec('PRAGMA journal_mode = WAL')
 
   if (isFirstRun) {
     runMigrations(db)
@@ -27,7 +27,53 @@ export function getDb(): Database.Database {
   return db
 }
 
-function runMigrations(db: Database.Database) {
+export interface InternRow {
+  name: string
+  institution_roll: string
+  guardian_name: string
+  guardian_relation: string
+  branch: string
+  year_of_study: string
+  starting_date: string
+  no_of_days: number
+  section_posted: string
+  institution_name: string
+}
+
+export function insertInterns(rows: InternRow[]): number {
+  const database = getDb()
+  const stmt = database.prepare(`
+    INSERT INTO interns (
+      name, institution_roll, guardian_name, guardian_relation,
+      branch, year_of_study, starting_date, no_of_days,
+      section_posted, institution_name
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `)
+  database.exec('BEGIN')
+  try {
+    for (const row of rows) {
+      stmt.run(
+        row.name,
+        row.institution_roll,
+        row.guardian_name,
+        row.guardian_relation,
+        row.branch,
+        row.year_of_study,
+        row.starting_date,
+        row.no_of_days,
+        row.section_posted,
+        row.institution_name,
+      )
+    }
+    database.exec('COMMIT')
+  } catch (err) {
+    database.exec('ROLLBACK')
+    throw err
+  }
+  return rows.length
+}
+
+function runMigrations(db: DatabaseSync): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS interns (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -26,3 +26,4 @@ dist-electron
 .opencode/*
 .claude/*
 .agents/*
+data/*

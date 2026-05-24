@@ -16,8 +16,9 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item';
 
 export default function AddData() {
-    const { openFile, filePath, columns, isLoading, error } = useExcelImport();
+    const { openFile, importData, filePath, columns, isLoading, error } = useExcelImport();
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [importResult, setImportResult] = useState<{ imported: number } | null>(null);
     const [selectedColumns, setSelectedColumns] = useState<Set<string>>(new Set());
 
     const handleOpenFile = useCallback(async () => {
@@ -48,11 +49,13 @@ export default function AddData() {
         setSelectedColumns(new Set());
     }, []);
 
-    const handleImport = useCallback(() => {
-        const selected = Array.from(selectedColumns);
-        console.log('Importing columns:', selected);
-        setDialogOpen(false);
-    }, [selectedColumns]);
+    const handleImport = useCallback(async () => {
+        const result = await importData();
+        if (result && !result.error) {
+            setImportResult({ imported: result.imported });
+            setDialogOpen(false);
+        }
+    }, [importData]);
 
     return (
         <div>
@@ -72,6 +75,12 @@ export default function AddData() {
 
             {error && (
                 <p className="mt-4 text-sm text-destructive">{error}</p>
+            )}
+
+            {importResult && (
+                <p className="mt-4 text-sm text-green-600">
+                    Successfully imported {importResult.imported} intern{importResult.imported !== 1 ? 's' : ''}.
+                </p>
             )}
 
             {filePath && !dialogOpen && (
@@ -143,7 +152,7 @@ export default function AddData() {
                         <DialogClose render={<Button variant="outline" />}>
                             Cancel
                         </DialogClose>
-                        <Button onClick={handleImport} disabled={selectedColumns.size === 0}>
+                        <Button onClick={handleImport} disabled={isLoading}>
                             Import Selected
                         </Button>
                     </DialogFooter>
