@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import xlsx from 'node-xlsx'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -66,3 +67,28 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+ipcMain.handle('dialog:openFile', async () => {
+  const result = await dialog.showOpenDialog(win!, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'Excel Files', extensions: ['xlsx', 'xls', 'csv'] },
+    ],
+  })
+
+  if (result.canceled || result.filePaths.length === 0) {
+    return null
+  }
+
+  const filePath = result.filePaths[0]
+
+  try {
+    const sheets = xlsx.parse(filePath)
+    const firstSheet = sheets[0]
+    const columns: string[] = firstSheet.data[0].map(String)
+
+    return { filePath, columns }
+  } catch (err) {
+    return { filePath, columns: [], error: String(err) }
+  }
+})
