@@ -73,6 +73,45 @@ export function insertInterns(rows: InternRow[]): number {
   return rows.length
 }
 
+const LIKE_FIELDS = new Set([
+  'name',
+  'institution_roll',
+  'guardian_name',
+  'guardian_relation',
+  'branch',
+  'institution_name',
+])
+
+export function searchInterns(filters: Partial<InternRow>): Record<string, unknown>[] {
+  const database = getDb()
+  const conditions: string[] = []
+  const params: unknown[] = []
+
+  for (const [field, value] of Object.entries(filters)) {
+    if (value === '' || value == null) continue
+
+    if (LIKE_FIELDS.has(field)) {
+      conditions.push(`${field} LIKE ?`)
+      params.push(`%${value}%`)
+    } else if (field === 'no_of_days') {
+      conditions.push(`${field} = ?`)
+      params.push(Number(value))
+    } else {
+      conditions.push(`${field} = ?`)
+      params.push(value)
+    }
+  }
+
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
+  const sql = `SELECT * FROM interns ${where} ORDER BY created_at DESC`
+
+  const stmt = database.prepare(sql)
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  return stmt.all(...params)
+}
+
 function runMigrations(db: DatabaseSync): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS interns (

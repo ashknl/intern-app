@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { getDb, insertInterns } from './db/index.js'
+import { getDb, insertInterns, searchInterns } from './db/index.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -233,5 +233,14 @@ ipcMain.handle('import:excelData', async (_event, args: { filePath: string }) =>
     return { imported }
   } catch (err) {
     return { imported: 0, error: String(err) }
+  }
+})
+
+ipcMain.handle('search:interns', async (_event, filters: Record<string, string>) => {
+  try {
+    const results = searchInterns(filters)
+    return { success: true, data: results, count: results.length }
+  } catch (err) {
+    return { success: false, error: String(err), data: [], count: 0 }
   }
 })
