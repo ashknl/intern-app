@@ -112,6 +112,13 @@ export function searchInterns(filters: Partial<InternRow>): Record<string, unkno
   return stmt.all(...params)
 }
 
+export function getAllInterns(): InternRow[] {
+  const database = getDb()
+  const stmt = database.prepare('SELECT * FROM interns ORDER BY created_at DESC')
+  //@ts-ignore
+  return stmt.all() as InternRow[]
+}
+
 function runMigrations(db: DatabaseSync): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS interns (

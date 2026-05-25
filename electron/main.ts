@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { getDb, insertInterns, searchInterns } from './db/index.js'
+import { getDb, insertInterns, searchInterns, getAllInterns } from './db/index.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -240,6 +240,15 @@ ipcMain.handle('search:interns', async (_event, filters: Record<string, string>)
   try {
     const results = searchInterns(filters)
     return { success: true, data: results, count: results.length }
+  } catch (err) {
+    return { success: false, error: String(err), data: [], count: 0 }
+  }
+})
+
+ipcMain.handle('dashboard:getAllInterns', async () => {
+  try {
+    const interns = getAllInterns()
+    return { success: true, data: interns, count: interns.length }
   } catch (err) {
     return { success: false, error: String(err), data: [], count: 0 }
   }
