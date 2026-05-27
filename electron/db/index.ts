@@ -107,6 +107,7 @@ export function searchInterns(filters: Partial<InternRow>): Record<string, unkno
 
   const stmt = database.prepare(sql)
 
+  console.log(params)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
   return stmt.all(...params)
