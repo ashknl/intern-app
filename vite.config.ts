@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
+import fs from 'node:fs'
 import electron from 'vite-plugin-electron/simple'
 import react from '@vitejs/plugin-react'
 
@@ -17,6 +18,25 @@ export default defineConfig({
       main: {
         entry: 'electron/main.ts',
         vite: {
+          plugins: [
+            {
+              name: 'copy-templates',
+              writeBundle() {
+                const templatesDir = path.join(__dirname, 'src', 'templates')
+                const outputDir = path.join(__dirname, 'dist-electron', 'templates')
+                if (!fs.existsSync(outputDir)) {
+                  fs.mkdirSync(outputDir, { recursive: true })
+                }
+                const files = fs.readdirSync(templatesDir)
+                for (const file of files) {
+                  fs.copyFileSync(
+                    path.join(templatesDir, file),
+                    path.join(outputDir, file),
+                  )
+                }
+              },
+            },
+          ],
           build: {
             rollupOptions: {
               external: ['node:sqlite', 'node-xlsx'],
