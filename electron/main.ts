@@ -2,11 +2,13 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import fs from 'node:fs'
 import { getDb, insertInterns, searchInterns, getAllInterns } from './db/index.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const xlsx = require('node-xlsx')
+const Handlebars = require('handlebars')
 
 type ColumnMapping = {
   dbFields: string[]
@@ -253,3 +255,173 @@ ipcMain.handle('dashboard:getAllInterns', async () => {
     return { success: false, error: String(err), data: [], count: 0 }
   }
 })
+
+type InternData = {
+  name: string
+  institution_name: string
+  starting_date: string
+  no_of_days: number
+}
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+function computeEndDate(startDateStr: string, days: number): string {
+  const start = new Date(startDateStr)
+  const end = new Date(start)
+  end.setDate(end.getDate() + days)
+  return formatDate(end.toISOString().slice(0, 10))
+}
+
+function getTemplate(filename: string): string {
+  return fs.readFileSync(path.join(__dirname, 'templates', filename), 'utf-8')
+}
+
+async function generatePDF(html: string): Promise<Buffer> {
+  const pdfWindow = new BrowserWindow({
+    show: false,
+    webPreferences: { nodeIntegration: false },
+  })
+
+  const encodedHtml = Buffer.from(html).toString('base64')
+  await pdfWindow.loadURL(`data:text/html;base64,${encodedHtml}`)
+
+  const pdfData = await pdfWindow.webContents.printToPDF({
+    printBackground: true,
+    preferCSSPageSize: true,
+  })
+
+  pdfWindow.close()
+  return pdfData
+}
+
+async function generateDocument(
+  intern: InternData,
+  templateName: string,
+  docLabel: string,
+): Promise<{ success: boolean; filePath?: string; error?: string }> {
+  const endDate = computeEndDate(intern.starting_date, intern.no_of_days)
+  const templateContent = getTemplate(templateName)
+  const compiled = Handlebars.compile(templateContent)
+  const html = compiled({
+    name: intern.name,
+    institution_name: intern.institution_name,
+    start_date: formatDate(intern.starting_date),
+    end_date: endDate,
+    signature_image: '',
+  })
+
+  const pdfData = await generatePDF(html)
+
+  const result = await dialog.showSaveDialog(win!, {
+    title: `Save ${docLabel}`,
+    defaultPath: path.join(
+      app.getPath('downloads'),
+      `${docLabel.replace(/\s/g, '_')}_${intern.name}.pdf`,
+    ),
+    filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+  })
+
+  if (result.canceled || !result.filePath) {
+    return { success: false, error: 'Save cancelled' }
+  }
+
+  fs.writeFileSync(result.filePath, pdfData)
+  return { success: true, filePath: result.filePath }
+}
+
+ipcMain.handle('document:generateCertificate', async (_event, intern: InternData) => {
+  try {
+    return await generateDocument(intern, 'certificate.html', 'Certificate')
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('document:generateGatePass', async (_event, intern: InternData) => {
+  try {
+    return await generateDocument(intern, 'gatepass.html', 'Gate Pass')
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('dialog:selectFolder', async () => {
+  const result = await dialog.showOpenDialog(win!, {
+    properties: ['openDirectory', 'createDirectory'],
+  })
+  if (result.canceled || result.filePaths.length === 0) {
+    return null
+  }
+  return result.filePaths[0]
+})
+
+async function renderPDF(html: string, pdfWindow: BrowserWindow): Promise<Buffer> {
+  const encodedHtml = Buffer.from(html).toString('base64')
+  await pdfWindow.loadURL(`data:text/html;base64,${encodedHtml}`)
+  return await pdfWindow.webContents.printToPDF({
+    printBackground: true,
+    preferCSSPageSize: true,
+  })
+}
+
+ipcMain.handle(
+  'document:bulkGenerate',
+  async (_event, args: { folderPath: string; type: 'certificate' | 'gatepass' }) => {
+    try {
+      const interns = getAllInterns()
+      const templateName =
+        args.type === 'certificate' ? 'certificate.html' : 'gatepass.html'
+      const docLabel =
+        args.type === 'certificate' ? 'Certificate' : 'Gate_Pass'
+      const templateContent = getTemplate(templateName)
+      const compiled = Handlebars.compile(templateContent)
+      const errors: string[] = []
+      let generated = 0
+
+      const pdfWindow = new BrowserWindow({
+        show: false,
+        webPreferences: { nodeIntegration: false },
+      })
+
+      for (const intern of interns) {
+        try {
+          const endDate = computeEndDate(
+            intern.starting_date,
+            intern.no_of_days,
+          )
+          const html = compiled({
+            name: intern.name,
+            institution_name: intern.institution_name,
+            start_date: formatDate(intern.starting_date),
+            end_date: endDate,
+            signature_image: '',
+          })
+          const pdfData = await renderPDF(html, pdfWindow)
+          const sanitized = intern.name
+            .replace(/[<>:"/\\|?*]/g, '_')
+            .trim()
+          const filePath = path.join(
+            args.folderPath,
+            `${docLabel}_${sanitized}.pdf`,
+          )
+          fs.writeFileSync(filePath, pdfData)
+          generated++
+        } catch (err) {
+          errors.push(`${intern.name}: ${String(err)}`)
+        }
+      }
+
+      pdfWindow.close()
+      return { success: true, generated, errors }
+    } catch (err) {
+      return { success: false, error: String(err), generated: 0, errors: [] }
+    }
+  },
+)
