@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link, Outlet, useMatchRoute } from '@tanstack/react-router';
 import {
     Sidebar,
@@ -21,7 +22,7 @@ const navItems = [
     { to: '/add-data' as const, label: 'Add Data', icon: PlusCircle },
     { to: '/reports' as const, label: 'Reports', icon: FileBarChart },
     { to: '/documents' as const, label: 'Documents', icon: FileText },
-    { to: '/settings' as const, label: 'Settings', icon: Settings },
+    // { to: '/settings' as const, label: 'Settings', icon: Settings },
 ];
 
 export default function Layout() {

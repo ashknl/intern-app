@@ -134,6 +134,7 @@ export default function Documents() {
         'document:generateGatePass',
         {
           name: intern.name,
+          guardian_name: intern.guardian_name,
           institution_name: intern.institution_name,
           starting_date: intern.starting_date,
           no_of_days: intern.no_of_days,

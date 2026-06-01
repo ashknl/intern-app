@@ -116,7 +116,8 @@ export function searchInterns(filters: Partial<InternRow>): Record<string, unkno
 export function getAllInterns(): InternRow[] {
   const database = getDb()
   const stmt = database.prepare('SELECT * FROM interns ORDER BY created_at DESC')
-  //@ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   return stmt.all() as InternRow[]
 }
 

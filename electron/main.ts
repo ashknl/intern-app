@@ -258,6 +258,7 @@ ipcMain.handle('dashboard:getAllInterns', async () => {
 
 type InternData = {
   name: string
+  guardian_name: string
   institution_name: string
   starting_date: string
   no_of_days: number
@@ -281,6 +282,12 @@ function computeEndDate(startDateStr: string, days: number): string {
 
 function getTemplate(filename: string): string {
   return fs.readFileSync(path.join(__dirname, 'templates', filename), 'utf-8')
+}
+
+function getLogoDataUrl(): string {
+  const logoPath = path.join(__dirname, 'templates', 'logo.jpg')
+  const buffer = fs.readFileSync(logoPath)
+  return `data:image/jpeg;base64,${buffer.toString('base64')}`
 }
 
 async function generatePDF(html: string): Promise<Buffer> {
@@ -311,10 +318,11 @@ async function generateDocument(
   const compiled = Handlebars.compile(templateContent)
   const html = compiled({
     name: intern.name,
+    guardian_name: intern.guardian_name,
     institution_name: intern.institution_name,
     start_date: formatDate(intern.starting_date),
     end_date: endDate,
-    signature_image: '',
+    logo: getLogoDataUrl(),
   })
 
   const pdfData = await generatePDF(html)
@@ -398,10 +406,11 @@ ipcMain.handle(
           )
           const html = compiled({
             name: intern.name,
+            guardian_name: intern.guardian_name,
             institution_name: intern.institution_name,
             start_date: formatDate(intern.starting_date),
             end_date: endDate,
-            signature_image: '',
+            logo: getLogoDataUrl(),
           })
           const pdfData = await renderPDF(html, pdfWindow)
           const sanitized = intern.name
