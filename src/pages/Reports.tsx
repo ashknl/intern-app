@@ -23,6 +23,10 @@ import {
 
 const YEAR_OPTIONS = ['1st', '2nd', '3rd', '4th'];
 const SECTION_OPTIONS = ['ITC', 'HRD', 'UNIT-1', 'UNIT-2', 'UNIT-3', 'UNIT-4'];
+const BRANCH_OPTIONS = [
+  'CSE', 'MECH', 'CHE', 'EE', 'EEE', 'ECE',
+  'BIOTECH', 'MINING', 'FOOD', 'METALLURGY', 'CERAMIC',
+];
 
 const EMPTY_FILTERS = {
     name: '',
@@ -142,11 +146,17 @@ export default function Reports() {
                             </Field>
                             <Field>
                                 <FieldLabel>Branch</FieldLabel>
-                                <Input
-                                    type="text"
+                                <Select
                                     value={filters.branch}
                                     onChange={(e) => handleChange('branch', e.target.value)}
-                                />
+                                >
+                                    <option value="">All</option>
+                                    {BRANCH_OPTIONS.map((branch) => (
+                                        <option key={branch} value={branch}>
+                                            {branch}
+                                        </option>
+                                    ))}
+                                </Select>
                             </Field>
                             <Field>
                                 <FieldLabel>Year of Study</FieldLabel>
