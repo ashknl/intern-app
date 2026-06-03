@@ -1,55 +1,64 @@
-import { app } from 'electron'
-import { DatabaseSync } from 'node:sqlite'
-import path from 'node:path'
-import fs from 'node:fs'
+import { app } from "electron";
+import { DatabaseSync } from "node:sqlite";
+import path from "node:path";
+import fs from "node:fs";
 
-let db: DatabaseSync | null = null
+let db: DatabaseSync | null = null;
 
 export function getDb(): DatabaseSync {
-  if (db) return db
+  if (db) return db;
 
-  const dbPath = path.join(app.getPath('userData'), 'interns.db')
+  const dbPath = path.join(app.getPath("userData"), "interns.db");
 
-  const dir = path.dirname(dbPath)
+  const dir = path.dirname(dbPath);
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
+    fs.mkdirSync(dir, { recursive: true });
   }
 
-  const isFirstRun = !fs.existsSync(dbPath)
+  const isFirstRun = !fs.existsSync(dbPath);
 
-  db = new DatabaseSync(dbPath)
-  db.exec('PRAGMA journal_mode = WAL')
+  db = new DatabaseSync(dbPath);
+  db.exec("PRAGMA journal_mode = WAL");
 
   if (isFirstRun) {
-    runMigrations(db)
+    runMigrations(db);
   }
 
-  return db
+  return db;
 }
 
 export interface InternRow {
-  name: string
-  institution_roll: string
-  guardian_name: string
-  guardian_relation: string
-  branch: string
-  year_of_study: string
-  starting_date: string
-  no_of_days: number
-  section_posted: string
-  institution_name: string
+  name: string;
+  institution_roll: string;
+  guardian_name: string;
+  guardian_relation: string;
+  branch: string;
+  year_of_study: string;
+  starting_date: string;
+  no_of_days: number;
+  section_posted: string;
+  institution_name: string;
+}
+
+export interface UserRow {
+  id: number;
+  username: string;
+  password_hash: string;
+  security_question: string;
+  security_answer_hash: string;
+  created_at: string;
 }
 
 export function insertInterns(rows: InternRow[]): number {
-  const database = getDb()
+  const database = getDb();
   const stmt = database.prepare(`
     INSERT INTO interns (
       name, institution_roll, guardian_name, guardian_relation,
       branch, year_of_study, starting_date, no_of_days,
       section_posted, institution_name
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `)
-  database.exec('BEGIN')
+  `);
+  database.exec("BEGIN");
   try {
     for (const row of rows) {
       stmt.run(
@@ -63,62 +72,131 @@ export function insertInterns(rows: InternRow[]): number {
         row.no_of_days,
         row.section_posted,
         row.institution_name,
-      )
+      );
     }
-    database.exec('COMMIT')
+    database.exec("COMMIT");
   } catch (err) {
-    database.exec('ROLLBACK')
-    throw err
+    database.exec("ROLLBACK");
+    throw err;
   }
-  return rows.length
+  return rows.length;
 }
 
 const LIKE_FIELDS = new Set([
-  'name',
-  'institution_roll',
-  'guardian_name',
-  'guardian_relation',
-  'branch',
-  'institution_name',
-])
+  "name",
+  "institution_roll",
+  "guardian_name",
+  "guardian_relation",
+  "branch",
+  "institution_name",
+]);
 
-export function searchInterns(filters: Partial<InternRow>): Record<string, unknown>[] {
-  const database = getDb()
-  const conditions: string[] = []
-  const params: unknown[] = []
+export function searchInterns(
+  filters: Partial<InternRow>,
+): Record<string, unknown>[] {
+  const database = getDb();
+  const conditions: string[] = [];
+  const params: unknown[] = [];
 
   for (const [field, value] of Object.entries(filters)) {
-    if (value === '' || value == null) continue
+    if (value === "" || value == null) continue;
 
     if (LIKE_FIELDS.has(field)) {
-      conditions.push(`${field} LIKE ?`)
-      params.push(`%${value}%`)
-    } else if (field === 'no_of_days') {
-      conditions.push(`${field} = ?`)
-      params.push(Number(value))
+      conditions.push(`${field} LIKE ?`);
+      params.push(`%${value}%`);
+    } else if (field === "no_of_days") {
+      conditions.push(`${field} = ?`);
+      params.push(Number(value));
     } else {
-      conditions.push(`${field} = ?`)
-      params.push(value)
+      conditions.push(`${field} = ?`);
+      params.push(value);
     }
   }
 
-  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
-  const sql = `SELECT * FROM interns ${where} ORDER BY created_at DESC`
+  const where =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const sql = `SELECT * FROM interns ${where} ORDER BY created_at DESC`;
 
-  const stmt = database.prepare(sql)
+  const stmt = database.prepare(sql);
 
-  console.log(params)
+  console.log(params);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  return stmt.all(...params)
+  return stmt.all(...params);
 }
 
 export function getAllInterns(): InternRow[] {
-  const database = getDb()
-  const stmt = database.prepare('SELECT * FROM interns ORDER BY created_at DESC')
+  const database = getDb();
+  const stmt = database.prepare(
+    "SELECT * FROM interns ORDER BY created_at DESC",
+  );
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return stmt.all() as InternRow[]
+  return stmt.all() as InternRow[];
+}
+
+export function createUser(
+  username: string,
+  passwordHash: string,
+  securityQuestion: string,
+  securityAnswerHash: string,
+): number {
+  const database = getDb();
+  const stmt = database.prepare(`
+    INSERT INTO users (username, password_hash, security_question, security_answer_hash)
+    VALUES (?, ?, ?, ?)
+  `);
+  const result = stmt.run(
+    username,
+    passwordHash,
+    securityQuestion,
+    securityAnswerHash,
+  );
+  return Number(result.lastInsertRowid);
+}
+
+export function getUserByUsername(username: string): UserRow | undefined {
+  const database = getDb();
+  const stmt = database.prepare("SELECT * FROM users WHERE username = ?");
+  return stmt.get(username) as UserRow | undefined;
+}
+
+export function getUserSecurityQuestion(username: string): string | undefined {
+  const database = getDb();
+  const stmt = database.prepare(
+    "SELECT security_question FROM users WHERE username = ?",
+  );
+  const row = stmt.get(username) as { security_question: string } | undefined;
+  return row?.security_question;
+}
+
+export function updatePassword(
+  username: string,
+  newPasswordHash: string,
+): boolean {
+  const database = getDb();
+  const stmt = database.prepare(
+    "UPDATE users SET password_hash = ? WHERE username = ?",
+  );
+  const result = stmt.run(newPasswordHash, username);
+  return result.changes > 0;
+}
+
+export function checkSecurityAnswerHash(
+  username: string,
+  passwordHash: string,
+): boolean {
+  const database = getDb();
+
+  let stmt = "SELECT security_answer_hash FROM users WHERE username = ?";
+  let prepared_stmt = database.prepare(stmt);
+
+  let result = prepared_stmt.get(username);
+  if (passwordHash === result?.security_answer_hash) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function runMigrations(db: DatabaseSync): void {
@@ -136,6 +214,15 @@ function runMigrations(db: DatabaseSync): void {
       section_posted TEXT NOT NULL,
       institution_name TEXT NOT NULL,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `)
+    );
+
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      security_question TEXT NOT NULL,
+      security_answer_hash TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
 }

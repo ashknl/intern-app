@@ -22,26 +22,26 @@ Basically all information about the interns:
     - email/phone
 - On Registration generate a unique ID
 
-- let the user be searchable based on this unique id
+- let the user be searchable based on this unique id (first priority)
 
 - Ability for Export of Excel data
 
 - Degree
-- section/institution
+- section 
+- Institution Registration number 
 - identification mark
 - signature of student
 
-- AADHAR
+- AADHAR NUMBER 
 - Passport Size photograph
 - Signature
 
 ## Admin Page
 - Ability to change password
 - Add Users/modify passwords
-- Add Officers for Offer Letter Signee
+- Add Officers for Offer Letter Signature
 - Database dump 
 - Feedback section
-
 
 
 ## New Documents

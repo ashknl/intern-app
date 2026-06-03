@@ -60,7 +60,7 @@ export default function Layout() {
                 </SidebarContent>
                 <SidebarFooter>
                     <p className="text-xs text-muted-foreground px-2">
-                        Electron + React + TanStack
+                        Placeholder
                     </p>
                 </SidebarFooter>
             </Sidebar>
