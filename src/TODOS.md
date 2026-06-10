@@ -33,8 +33,6 @@ Basically all information about the interns:
 - signature of student
 
 - AADHAR NUMBER 
-- Passport Size photograph
-- Signature
 
 ## Admin Page
 - Ability to change password
