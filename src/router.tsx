@@ -5,6 +5,7 @@ import AddData from './pages/AddData';
 import Reports from './pages/Reports';
 import Documents from './pages/Documents';
 import Settings from './pages/Settings';
+import Admin from './pages/Admin';
 
 // 1. Create the Root Route (uses our Layout with Sidebar)
 const rootRoute = createRootRoute({
@@ -42,6 +43,12 @@ const settingsRoute = createRoute({
     component: Settings,
 });
 
+const adminRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/admin',
+    component: Admin,
+});
+
 // 3. Create the Route Tree
 const routeTree = rootRoute.addChildren([
     dashboardRoute,
@@ -49,6 +56,7 @@ const routeTree = rootRoute.addChildren([
     reportsRoute,
     documentsRoute,
     settingsRoute,
+    adminRoute,
 ]);
 
 // 4. Create the Memory History (Perfect for Electron!)

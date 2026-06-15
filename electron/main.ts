@@ -3,12 +3,13 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs'
-import { getDb, insertInterns, searchInterns, getAllInterns } from './db/index.js'
+import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer } from './db/index.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const xlsx = require('node-xlsx')
 const Handlebars = require('handlebars')
+const bcryptjs = require('bcryptjs')
 
 type ColumnMapping = {
   dbFields: string[]
@@ -434,3 +435,109 @@ ipcMain.handle(
     }
   },
 )
+
+ipcMain.handle('auth:login', async (_event, args: { username: string; password: string }) => {
+  try {
+    const user = getUserByUsername(args.username)
+    if (!user) {
+      return { success: false, error: 'Invalid username or password.' }
+    }
+    const match = bcryptjs.compareSync(args.password, user.password_hash)
+    if (!match) {
+      return { success: false, error: 'Invalid username or password.' }
+    }
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('manual:register', async (_event, args: { formData: Record<string, string>; registration_id: string }) => {
+  try {
+    insertManualIntern({
+      name: args.formData.name,
+      gender: args.formData.gender,
+      identification_mark: args.formData.identification_mark,
+      institution_roll: args.formData.institution_roll,
+      degree: args.formData.degree,
+      branch: args.formData.branch,
+      year_of_study: args.formData.year_of_study,
+      guardian_name: args.formData.guardian_name,
+      guardian_relation: args.formData.guardian_relation,
+      res_c_o: args.formData.res_c_o,
+      res_p_o: args.formData.res_p_o,
+      res_pin: args.formData.res_pin,
+      res_contact: args.formData.res_contact,
+      cur_c_o: args.formData.cur_c_o,
+      cur_p_o: args.formData.cur_p_o,
+      cur_pin: args.formData.cur_pin,
+      cur_contact: args.formData.cur_contact,
+      starting_date: args.formData.starting_date,
+      no_of_days: Number(args.formData.no_of_days),
+      section_posted: args.formData.section_posted,
+      institution_name: args.formData.institution_name,
+      registration_id: args.registration_id,
+    })
+    return { success: true, registration_id: args.registration_id }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('admin:getAllUsers', async () => {
+  try {
+    const users = getAllUsers()
+    return { success: true, data: users, count: users.length }
+  } catch (err) {
+    return { success: false, error: String(err), data: [], count: 0 }
+  }
+})
+
+ipcMain.handle('admin:createUser', async (_event, args: {
+  username: string
+  password: string
+  securityQuestion: string
+  securityAnswer: string
+}) => {
+  try {
+    const passwordHash = bcryptjs.hashSync(args.password, 10)
+    const answerHash = bcryptjs.hashSync(args.securityAnswer, 10)
+    createUser(args.username, passwordHash, args.securityQuestion, answerHash)
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('admin:getAllOfficers', async () => {
+  try {
+    const officers = getAllOfficers()
+    return { success: true, data: officers, count: officers.length }
+  } catch (err) {
+    return { success: false, error: String(err), data: [], count: 0 }
+  }
+})
+
+ipcMain.handle('admin:insertOfficer', async (_event, args: {
+  officerName: string
+  officerDesignation: string
+}) => {
+  try {
+    const id = insertOfficer(args.officerName, args.officerDesignation)
+    return { success: true, id }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('admin:deleteOfficer', async (_event, args: { id: number }) => {
+  try {
+    const deleted = deleteOfficer(args.id)
+    if (!deleted) {
+      return { success: false, error: 'Officer not found.' }
+    }
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})

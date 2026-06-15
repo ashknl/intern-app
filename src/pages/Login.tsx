@@ -10,8 +10,9 @@ export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
 
@@ -20,7 +21,10 @@ export default function Login() {
       return
     }
 
-    const ok = login(username, password)
+    setLoading(true)
+    const ok = await login(username, password)
+    setLoading(false)
+
     if (!ok) {
       setError('Invalid username or password.')
     }
@@ -57,8 +61,8 @@ export default function Login() {
               <p className="text-sm text-destructive">{error}</p>
             )}
 
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing in...' : 'Login'}
             </Button>
           </form>
         </CardContent>

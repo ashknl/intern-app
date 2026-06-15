@@ -14,7 +14,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from './ui/sidebar';
-import { LayoutDashboard, PlusCircle, FileBarChart, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, FileBarChart, FileText, Settings, Shield } from 'lucide-react';
 
 // Navigation config
 const navItems = [
@@ -22,6 +22,7 @@ const navItems = [
     { to: '/add-data' as const, label: 'Add Data', icon: PlusCircle },
     { to: '/reports' as const, label: 'Reports', icon: FileBarChart },
     { to: '/documents' as const, label: 'Documents', icon: FileText },
+    { to: '/admin' as const, label: 'Admin', icon: Shield },
     // { to: '/settings' as const, label: 'Settings', icon: Settings },
 ];
 

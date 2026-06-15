@@ -39,7 +39,7 @@ export default defineConfig({
           ],
           build: {
             rollupOptions: {
-              external: ['node:sqlite', 'node-xlsx'],
+              external: ['node:sqlite', 'node-xlsx', 'bcryptjs'],
             },
           },
         },

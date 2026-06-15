@@ -45,6 +45,7 @@ interface ManualFormData {
   year_of_study: string;
   guardian_name: string;
   guardian_relation: string;
+  institution_name: string;
   res_c_o: string;
   res_p_o: string;
   res_pin: string;
@@ -56,7 +57,6 @@ interface ManualFormData {
   starting_date: string;
   no_of_days: string;
   section_posted: string;
-  institution_name: string;
 }
 
 const EMPTY_FORM: ManualFormData = {
@@ -69,6 +69,7 @@ const EMPTY_FORM: ManualFormData = {
   year_of_study: "",
   guardian_name: "",
   guardian_relation: "",
+  institution_name: "",
   res_c_o: "",
   res_p_o: "",
   res_pin: "",
@@ -80,7 +81,6 @@ const EMPTY_FORM: ManualFormData = {
   starting_date: "",
   no_of_days: "",
   section_posted: "",
-  institution_name: "",
 };
 
 function generateRegId(): string {
@@ -90,7 +90,7 @@ function generateRegId(): string {
   const d = String(now.getDate()).padStart(2, "0");
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let rand = "";
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     rand += chars[Math.floor(Math.random() * chars.length)];
   }
   return `REG-${y}${m}${d}-${rand}`;
@@ -139,6 +139,7 @@ export default function AddData() {
       { field: "degree", label: "Degree" },
       { field: "branch", label: "Branch" },
       { field: "year_of_study", label: "Year of Study" },
+      { field: "institution_name", label: "Institution Name" },
       { field: "guardian_name", label: "Guardian Name" },
       { field: "guardian_relation", label: "Relationship" },
       { field: "res_c_o", label: "Residential c/o" },
@@ -150,7 +151,6 @@ export default function AddData() {
       { field: "starting_date", label: "Starting Date" },
       { field: "no_of_days", label: "No. of Days" },
       { field: "section_posted", label: "Section Posted" },
-      { field: "institution_name", label: "Institution Name" },
     ];
 
     const missing = requiredFields.filter((f) => !formData[f.field].trim());
@@ -169,18 +169,27 @@ export default function AddData() {
     setFormError(null);
 
     const regId = generateRegId();
-    console.log("Registering intern:", {
-      ...formData,
-      no_of_days: days,
-      registration_id: regId,
-    });
 
-    await new Promise((r) => setTimeout(r, 100));
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const result = await window.ipcRenderer.invoke('manual:register', {
+        formData,
+        registration_id: regId,
+      })
 
-    setSuccessMsg(`Registered! ID: ${regId}`);
-    setRegistering(false);
-    setFormData({ ...EMPTY_FORM });
-    setSameAddress(false);
+      if (result.success) {
+        setSuccessMsg(`Registered! ID: ${regId}`);
+        setFormData({ ...EMPTY_FORM });
+        setSameAddress(false);
+      } else {
+        setFormError(result.error || 'Registration failed.');
+      }
+    } catch (err) {
+      setFormError(String(err));
+    } finally {
+      setRegistering(false);
+    }
   };
 
   return (
@@ -293,6 +302,15 @@ export default function AddData() {
                       </option>
                     ))}
                   </Select>
+                </Field>
+                <Field>
+                  <FieldLabel>Institution Name *</FieldLabel>
+                  <Input
+                    value={formData.institution_name}
+                    onChange={(e) =>
+                      handleChange("institution_name", e.target.value)
+                    }
+                  />
                 </Field>
               </div>
             </div>
@@ -458,15 +476,6 @@ export default function AddData() {
                       </option>
                     ))}
                   </Select>
-                </Field>
-                <Field>
-                  <FieldLabel>Institution Name *</FieldLabel>
-                  <Input
-                    value={formData.institution_name}
-                    onChange={(e) =>
-                      handleChange("institution_name", e.target.value)
-                    }
-                  />
                 </Field>
               </div>
             </div>

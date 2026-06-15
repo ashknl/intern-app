@@ -2,20 +2,18 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 
 interface AuthContextValue {
   isAuthenticated: boolean
-  login: (username: string, password: string) => boolean
+  login: (username: string, password: string) => Promise<boolean>
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-const HARDCODED_USERNAME = 'admin'
-const HARDCODED_PASSWORD = '0000'
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const login = useCallback((username: string, password: string): boolean => {
-    if (username === HARDCODED_USERNAME && password === HARDCODED_PASSWORD) {
+  const login = useCallback(async (username: string, password: string): Promise<boolean> => {
+    const result = await window.ipcRenderer.invoke('auth:login', { username, password })
+    if (result.success) {
       setIsAuthenticated(true)
       return true
     }
