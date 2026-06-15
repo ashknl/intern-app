@@ -226,6 +226,21 @@ export function getAllUsers(): SafeUserRow[] {
   return stmt.all() as SafeUserRow[]
 }
 
+const DISTINCT_COLUMNS = new Set([
+  'name', 'institution_roll', 'guardian_name', 'guardian_relation',
+  'branch', 'year_of_study', 'section_posted', 'institution_name',
+])
+
+export function getDistinctColumn(column: string): string[] {
+  if (!DISTINCT_COLUMNS.has(column)) return []
+  const database = getDb()
+  const stmt = database.prepare(
+    `SELECT DISTINCT ${column} FROM interns WHERE ${column} IS NOT NULL AND ${column} != '' ORDER BY ${column} ASC`,
+  )
+  const rows = stmt.all() as Record<string, string>[]
+  return rows.map((r) => r[column])
+}
+
 export interface OfficerRow {
   id: number
   officer_name: string
@@ -254,6 +269,44 @@ export function deleteOfficer(id: number): boolean {
   const database = getDb()
   const stmt = database.prepare('DELETE FROM signing_officers WHERE id = ?')
   const result = stmt.run(id)
+  return result.changes > 0
+}
+
+export interface FeedbackRow {
+  id: number
+  feedback_text: string
+  created_at: string
+}
+
+export interface FeedbackDisplayRow extends FeedbackRow {
+  name: string
+  institution_roll: string
+  institution_name: string
+}
+
+export function getAllFeedbacks(): FeedbackDisplayRow[] {
+  const database = getDb()
+  const stmt = database.prepare(`
+    SELECT f.id, f.feedback_text, f.created_at, i.name, i.institution_roll, i.institution_name
+    FROM intern_feedback f
+    JOIN interns i ON f.id = i.id
+    ORDER BY f.created_at DESC
+  `)
+  return stmt.all() as FeedbackDisplayRow[]
+}
+
+export function insertFeedback(internId: number, feedbackText: string): void {
+  const database = getDb()
+  const stmt = database.prepare(
+    'INSERT OR REPLACE INTO intern_feedback (id, feedback_text) VALUES (?, ?)',
+  )
+  stmt.run(internId, feedbackText)
+}
+
+export function deleteFeedback(internId: number): boolean {
+  const database = getDb()
+  const stmt = database.prepare('DELETE FROM intern_feedback WHERE id = ?')
+  const result = stmt.run(internId)
   return result.changes > 0
 }
 
@@ -346,6 +399,17 @@ function runMigrations(db: DatabaseSync): void {
       officer_name TEXT NOT NULL,
       officer_designation TEXT NOT NULL,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    INSERT INTO users (username, password_hash, security_question, security_answer_hash)
+    SELECT 'admin', '$2b$10$DfrPWeWOwWKGyiuL2U4yOur2sp04WtRKZjFukoS540/OrrNBV4q1W', 'Who is the administrator?', '$2b$10$3GR7UZPHq0w0jXlgTZ44i.0.fZqhDEpMM7SkmGCIe/PvTstepDveK'
+    WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
+
+    CREATE TABLE IF NOT EXISTS intern_feedback (
+      id INTEGER PRIMARY KEY,
+      feedback_text TEXT NOT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (id) REFERENCES interns(id)
     );
   `)
 }

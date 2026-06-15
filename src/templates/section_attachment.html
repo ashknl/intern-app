@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Section Attachment</title>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        *:not(dialog) {
+            margin: 0;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            html {
+                interpolate-size: allow-keywords;
+            }
+        }
+
+        body {
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img,
+        picture,
+        video,
+        canvas,
+        svg {
+            display: block;
+            max-width: 100%;
+        }
+
+        input,
+        button,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        p,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            overflow-wrap: break-word;
+        }
+
+        p {
+            text-wrap: pretty;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            text-wrap: balance;
+        }
+
+        #root,
+        #__next {
+            isolation: isolate;
+        }
+
+        /* ── PAGE ── */
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background: #fff;
+            color: #000;
+            width: 270mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 14mm 18mm 12mm;
+        }
+
+        /* ── LETTERHEAD ── */
+        .letterhead {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .left-section {
+            flex: 1;
+            font-size: 11pt;
+            line-height: 1.55;
+            text-align: left;
+        }
+
+        .right-section {
+            flex: 1;
+            font-size: 11pt;
+            line-height: 1.55;
+            text-align: right;
+        }
+
+        .logo {
+            flex: 0 0 110px;
+            text-align: center;
+        }
+
+        .logo img {
+            width: 110px;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        /* ── DIVIDERS ── */
+        .line-break {
+            width: 100%;
+            border: none;
+            border-top: 0.5px solid #000;
+            margin: 4px 0 2px;
+        }
+
+        .line-break-text-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5pt;
+            padding: 2px 0;
+        }
+
+        /* ── DOCUMENT HEADER (centered GA/HRD section title) ── */
+        .doc-header {
+            text-align: center;
+            margin: 10px 0 8px;
+        }
+
+        .doc-header p {
+            font-size: 12pt;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+
+        .doc-divider {
+            width: 100%;
+            border: none;
+            border-top: 1px solid #000;
+            margin: 6px 0;
+        }
+
+        /* ── META LINE ── */
+        .meta-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11pt;
+            margin-bottom: 6px;
+        }
+
+        /* ── SUB / REF BLOCK ── */
+        .sub-ref {
+            font-size: 11pt;
+            margin-bottom: 14px;
+            line-height: 1.7;
+        }
+
+        .sub-ref p {
+            margin: 0;
+        }
+
+        /* ── SEPARATOR === ── */
+        .triple-equal {
+            text-align: center;
+            font-size: 13pt;
+            margin: 8px 0 14px;
+            letter-spacing: 4px;
+        }
+
+        /* ── BODY TEXT ── */
+        .body-text {
+            font-size: 12pt;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 14px;
+        }
+
+        /* ── INTERNSHIP TABLE ── */
+        .internship-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11.5pt;
+            margin-bottom: 16px;
+        }
+
+        .internship-table th,
+        .internship-table td {
+            border: 1px dashed #000;
+            padding: 5px 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .internship-table th {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .internship-table td:first-child {
+            text-align: center;
+            width: 60px;
+        }
+
+        /* ── CONTINUATION PARAGRAPHS ── */
+        .para {
+            font-size: 12pt;
+            line-height: 1.7;
+            text-align: justify;
+            margin-bottom: 12px;
+        }
+
+        /* ── SIGNATURE BLOCK ── */
+        .signature-block {
+            text-align: right;
+            margin: 24px 0 30px;
+            font-size: 12pt;
+            line-height: 1.8;
+        }
+
+        /* ── TO / COPY SECTION ── */
+        .to-block {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .copy-section {
+            font-size: 12pt;
+            margin-bottom: 6px;
+        }
+
+        .copy-section p {
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .copy-item {
+            font-size: 12pt;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .copy-item .sub-item {
+            margin-left: 24px;
+            font-style: italic;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            width: 100%;
+            border-top: 0.5px solid #000;
+            margin-top: 20px;
+            padding-top: 6px;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 9pt;
+            line-height: 1.5;
+            margin-bottom: 2px;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 14mm 18mm 12mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── LETTERHEAD ── -->
+    <div class="letterhead">
+        <div class="left-section">
+            <p>Ordnance Factory Badmal</p>
+            <p>Unit of Munitions India Limited</p>
+            <p>Govt. Of India Enterprise</p>
+            <p>Ministry Of Defence</p>
+            <p>Badmal, Balangir(Odisha) - 767070</p>
+        </div>
+        <div class="logo">
+            <img src="./logo.jpg" alt="" />
+        </div>
+        <div class="right-section">
+            <p>आयुध निर्माणी वड़माल</p>
+            <p>म्यूनिशंस इंडिया लिमिटेड की इकाई</p>
+            <p>भारत सरकार का उद्यम</p>
+            <p>रक्षा मंत्रालय</p>
+            <p>वड़माल बलांगीर, ओडिशा-767070</p>
+        </div>
+    </div>
+
+    <hr class="line-break" />
+    <div class="line-break-text-container">
+        <span><b>फ़ोन </b> / Phone: 06655-250 969 - 973</span>
+        <span><b>फ़ैक्स</b> / FAX: 06655-250 561/250271</span>
+        <span><b>ईमेल </b> / email: gm_ofbol@ord.gov.in</span>
+    </div>
+    <hr class="line-break" />
+
+    <!-- ── DOCUMENT HEADER ── -->
+    <div class="doc-header">
+        <p>GA(SER)/HRD SECTION</p>
+        <p>ORDNANCE FACTORY BADMAL</p>
+    </div>
+
+    <hr class="doc-divider" />
+
+    <!-- NO. / DATE META LINE -->
+    <div class="meta-line">
+        <span><u>No : 8017/GA(SER)HRD/INTERNSHIP/{{year_range}}/{{serial}}</u></span>
+        <span><u>Date : {{generation_date}}</u></span>
+    </div>
+
+    <!-- SUB / REF -->
+    <div class="sub-ref">
+        <p>Sub: &nbsp; MIL Internship Programme of students- Reg. of</p>
+        <p>Ref : &nbsp; GM's approval No. 8017/GA(SER)/HRD/MIL INTERNSHIP/{{year_range}}/2</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dtd.{{gm_approval_date}}</p>
+    </div>
+
+    <!-- === -->
+    <div class="triple-equal">===</div>
+
+    <!-- BODY -->
+    <p class="body-text">
+        The competent authority has approved the name of the following students to undergo MIL
+        Internship Programme for the period mentioned against him/her :-
+    </p>
+
+    <!-- TABLE -->
+    <table class="internship-table">
+        <thead>
+            <tr>
+                <th>Sl No.</th>
+                <th>Name of Student<br />(S/Shri/Miss)</th>
+                <th>Branch of Study</th>
+                <th>Period</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>01</td>
+                <td>{{name}}</td>
+                <td>{{degree}} {{branch}}</td>
+                <td>{{start_date}} to {{end_date}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CONTINUATION PARAGRAPHS -->
+    <p class="para">
+        During the training period, the above mentioned student is hereby attached in connection with
+        preparation of Project Reports under your guidance and supervision. You are requested to intimate
+        <b>" Title of The Project Report"</b> to the undersigned prior to commencement of the task. Selection of
+        the project work should take into consideration (i) The knowledge level of the intern &amp; (ii)
+        Requirement of the factory.
+    </p>
+
+    <p class="para">
+        After successful completion of internship and acceptance of the project report, the
+        individual will be awarded the desired " Internship Training Completion Certificate " accordingly.
+    </p>
+
+    <!-- SIGNATURE -->
+    <div class="signature-block">
+        <p>OIC/HRD</p>
+    </div>
+
+    <!-- TO BLOCK -->
+    <div class="to-block">
+        <p>To,</p>
+        <p>OIC/{{section_name}}</p>
+    </div>
+
+    <!-- COPY TO -->
+    <div class="copy-section">
+        <p>Copy to :</p>
+    </div>
+
+    <div class="copy-item">
+        1. &nbsp; The Sr. SO / SO : For kind information please.
+    </div>
+
+    <div class="copy-item">
+        2. &nbsp; HOS / Security: A photocopy of Adhaar Card , College Identity Card, Gate Pass duly filled in
+        the prescribed format alongwith 01 additional passport size photograph of the trainee(s) cited at
+        table above is/are forwarded herewith for issuance of necessary Gate Pass for smooth in-coming &amp;
+        out-going purposes from security view point during his/their training session.
+    </div>
+
+    <div class="copy-item">
+        3. &nbsp; (i) {{name}}
+        <div class="sub-item">
+            <p>a. &nbsp; You are requested to contact the nominated Officer for further details please.</p>
+            <p>b. &nbsp; You are advised not to carry any CD/Pen Drive/Mobile Phone/objectionable electronic
+                device within the factory premises failing which disciplinary action as deemed fit will be
+                initiated against you.</p>
+            <p>b. &nbsp; All other terms and condition as per rules will remain intact.</p>
+        </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <section class="footer">
+        <p>CIN No.U29190PN2021GOI203505</p>
+        <p>पंजीकृत पता: गोलाबारूद निर्माणी खड़की, पुणे–४११००३ (महाराष्ट्र)</p>
+        <p>Regd. Address: Ammunition Factory, Khadki, Pune – 411003 (Maharashtra)</p>
+        <p>निगमित कार्यालय पता : दूसरी मंजिल, न्यातियुनिट्री, नगर रोड, येरवडा, पुणे–४११००६ (महाराष्ट्र)</p>
+        <p>Corporate Office Address: 2nd Floor, NyatiUnitree, Nagar Road, Yerwada, Pune- 411006 (Maharashtra)</p>
+        <p>दूरभाष सं / Phone No. 020-67080400, Email ID : mil-pune@munitionsindia.in &nbsp; website –
+            https://munitionsindia.in</p>
+    </section>
+
+</body>
+
+</html>

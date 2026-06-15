@@ -3,12 +3,12 @@ import { Shield } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Users from './admin/Users'
 import SigningOfficers from './admin/SigningOfficers'
-import UpdateStudentDetails from './admin/UpdateStudentDetails'
+import FeedbackDetails from './admin/FeedbackDetails'
 
 const TABS = [
   { id: 'users', label: 'Users', component: Users },
   { id: 'officers', label: 'Signing Officers', component: SigningOfficers },
-  { id: 'students', label: 'Update Student Details', component: UpdateStudentDetails },
+  { id: 'feedback', label: 'Add Feedback for students', component: FeedbackDetails },
 ]
 
 export default function Admin() {

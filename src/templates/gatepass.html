@@ -18,9 +18,10 @@
 
     body {
       font-family: "Times New Roman", Times, serif;
+      font-size: 10pt;
       background: #fff;
       color: #000;
-      padding: 12mm 14mm 14mm;
+      padding: 8mm 10mm 10mm;
     }
 
     /* ── HEADER ── */
@@ -28,15 +29,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 6px;
+      margin-bottom: 4px;
     }
 
     .header-left,
     .header-right {
       flex: 1;
-      font-size: 11.5pt;
-      line-height: 1.55;
+      font-size: 10pt;
+      line-height: 1.35;
     }
 
     .header-right {
@@ -44,12 +45,12 @@
     }
 
     .header-logo {
-      flex: 0 0 110px;
+      flex: 0 0 85px;
       text-align: center;
     }
 
     .header-logo img {
-      width: 110px;
+      width: 85px;
       height: auto;
       margin: 0 auto;
     }
@@ -58,14 +59,14 @@
     .divider-strip {
       border: none;
       border-top: 1px dotted #333;
-      margin: 4px 0 2px;
+      margin: 2px 0 1px;
     }
 
     .contact-row {
       display: flex;
       justify-content: space-between;
-      font-size: 9.5pt;
-      padding: 2px 0;
+      font-size: 8.5pt;
+      padding: 1px 0;
     }
 
     .contact-row span b {
@@ -75,12 +76,12 @@
     /* ── TITLE ── */
     .doc-title {
       text-align: center;
-      margin: 10px 0 14px;
-      font-size: 11.5pt;
+      margin: 6px 0 8px;
+      font-size: 10.5pt;
       font-weight: bold;
       text-decoration: underline;
       text-transform: uppercase;
-      line-height: 1.55;
+      line-height: 1.35;
     }
 
     .doc-title em {
@@ -93,8 +94,8 @@
     .field-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11pt;
-      margin-bottom: 8px;
+      font-size: 9.5pt;
+      margin-bottom: 4px;
     }
 
     .field-table tr {
@@ -102,28 +103,28 @@
     }
 
     .field-table td {
-      padding: 5px 4px 5px 0;
-      line-height: 1.6;
+      padding: 3px 3px 3px 0;
+      line-height: 1.35;
     }
 
     .field-num {
-      width: 40px;
+      width: 32px;
       white-space: nowrap;
     }
 
     .field-label {
-      width: 170px;
+      width: 150px;
       white-space: nowrap;
     }
 
     .field-colon {
-      width: 16px;
+      width: 14px;
       text-align: center;
     }
 
     .field-value {
       border-bottom: 1px solid #555;
-      min-width: 200px;
+      min-width: 160px;
     }
 
     .field-value.multiline {
@@ -133,26 +134,26 @@
     .field-value.multiline .addr-line {
       border-bottom: 1px solid #555;
       display: block;
-      min-height: 22px;
+      min-height: 14px;
       padding-bottom: 1px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     /* photo box */
     .photo-cell {
-      width: 110px;
+      width: 90px;
       vertical-align: top;
-      padding-left: 10px;
+      padding-left: 8px;
     }
 
     .photo-box {
-      width: 100px;
-      height: 120px;
+      width: 80px;
+      height: 90px;
       border: 1px solid #333;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9pt;
+      font-size: 8pt;
       color: #888;
       text-align: center;
       position: relative;
@@ -170,70 +171,74 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin-top: 16px;
-      font-size: 11pt;
+      margin-top: 10px;
+      font-size: 10pt;
     }
 
     .gate-pass-block {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .gate-pass-line {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .gate-pass-line .blank {
       border-bottom: 1px solid #333;
       display: inline-block;
-      min-width: 70px;
+      min-width: 60px;
     }
 
     .lht-block {
       text-align: center;
-      font-size: 10pt;
-      margin-top: 4px;
+      font-size: 9pt;
     }
 
     .lht-circle {
-      width: 60px;
-      height: 60px;
+      width: 44px;
+      height: 44px;
       border: 1px solid #aaa;
       border-radius: 50%;
-      margin: 0 auto 4px;
+      margin: 0 auto 3px;
     }
 
     .signature-block {
       text-align: center;
-      font-size: 11pt;
+      font-size: 10pt;
     }
 
     .signature-line {
       border-top: 1px solid #333;
-      width: 180px;
+      width: 140px;
       margin: 2px auto 2px;
     }
 
     /* ── FOOTER GUARDIAN LINE ── */
     .guardian-line {
-      margin-top: 14px;
-      font-size: 10.5pt;
+      margin-top: 8px;
+      font-size: 9pt;
       border-top: 1px dotted #ccc;
-      padding-top: 6px;
+      padding-top: 3px;
     }
 
     .guardian-line .blank-long {
       border-bottom: 1px solid #333;
       display: inline-block;
-      min-width: 140px;
+      min-width: 110px;
     }
 
     @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
       body {
-        padding: 12mm 14mm 14mm;
+        padding: 8mm 10mm 10mm;
+        overflow: hidden;
       }
     }
   </style>
@@ -280,92 +285,70 @@
   <!-- FORM TABLE with photo in top-right -->
   <table class="field-table">
     <tbody>
-      <!-- Row 1: Name + photo rowspan -->
       <tr>
         <td class="field-num">01.</td>
         <td class="field-label">Name</td>
         <td class="field-colon">:</td>
         <td class="field-value">Shri <span style="text-decoration:underline;">{{name}} </span></td>
-        <td class="photo-cell" rowspan="4" style="vertical-align:top; padding-top:2px;">
+        <td class="photo-cell" rowspan="4" style="vertical-align:top; padding-top:1px;">
           <div class="photo-box">
             <span>Paste<br>Photo<br>Here</span>
           </div>
         </td>
       </tr>
-      <!-- Row 2: Father's Name -->
       <tr>
         <td class="field-num">02.</td>
         <td class="field-label">Father/Guardian's Name</td>
         <td class="field-colon">:</td>
-        <td class="field-value">Shri <span
-            style="text-decoration:underline;">{{guardian_name}}</span>
+        <td class="field-value">Shri <span style="text-decoration:underline;">{{guardian_name}}</span>
         </td>
       </tr>
-      <!-- Row 3: Residential Address (multiline) -->
       <tr>
         <td class="field-num">03.</td>
         <td class="field-label">Residential Address</td>
         <td class="field-colon">:</td>
         <td class="field-value multiline">
-          <span class="addr-line">C/O–
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="addr-line">&nbsp;</span>
-          <span class="addr-line">PO-
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="addr-line">Pin–
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="addr-line">Mobile No./E-mail :
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="addr-line">C/O:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;PO:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</span>
+          <span class="addr-line">Pin:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Mobile/E-mail:&emsp;&emsp;&emsp;&emsp;&nbsp;</span>
         </td>
       </tr>
-      <!-- Row 4: Present Address -->
       <tr>
         <td class="field-num">04.</td>
         <td class="field-label">Present Address</td>
         <td class="field-colon">:</td>
         <td class="field-value multiline">
-          <span class="addr-line">C/O–
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="addr-line">&nbsp;</span>
-          <span class="addr-line">&nbsp;</span>
-          <span class="addr-line">Dist –
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,
-            Odisha–
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="addr-line">C/O:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;Dist:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;</span>
+          <span class="addr-line">PO:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;State: Odisha&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;</span>
         </td>
       </tr>
-      <!-- Row 5: Designation -->
       <tr>
         <td class="field-num">05.</td>
         <td class="field-label">Designation/Class/Standard</td>
         <td class="field-colon">:</td>
-        <td class="field-value" colspan="2">&nbsp;</td>
+        <td class="field-value" colspan="2">{{degree}}/{{branch}}</td>
       </tr>
-      <!-- Row 6: Section/Institution -->
       <tr>
         <td class="field-num">06.</td>
         <td class="field-label">Section/Institution</td>
         <td class="field-colon">:</td>
         <td class="field-value" colspan="2">{{institution_name}}</td>
       </tr>
-      <!-- Row 7: Visible ID Mark -->
       <tr>
         <td class="field-num">07.</td>
         <td class="field-label">Visible Identification Mark</td>
         <td class="field-colon">:</td>
-        <td class="field-value" colspan="2">&nbsp;</td>
+        <td class="field-value" colspan="2">{{identification_mark}}</td>
       </tr>
-      <!-- Row 8: Gate Pass + Valid date -->
       <tr>
         <td class="field-num">08.</td>
         <td class="field-label">Gate Pass No :</td>
         <td class="field-colon"></td>
-        <td colspan="2" style="padding-top:8px;">
-          <span style="border-bottom:1px solid #333; display:inline-block; min-width:60px;">&nbsp;</span>
-          &nbsp;&nbsp;&nbsp;
+        <td colspan="2" style="padding-top:6px;">
+          <span style="border-bottom:1px solid #333; display:inline-block; min-width:50px;">&nbsp;</span>
+          &nbsp;&nbsp;
           <span>, : Valid for Training up to :</span>
           &nbsp;
-          <span style="border-bottom:1px solid #333; display:inline-block; min-width:100px;">&nbsp;</span>
+          <span style="border-bottom:1px solid #333; display:inline-block; min-width:80px;">&nbsp;</span>
         </td>
       </tr>
     </tbody>
@@ -378,7 +361,7 @@
       <p>( L. H. T. Impression )</p>
     </div>
     <div class="signature-block">
-      <div style="min-height: 40px;"></div>
+      <div style="min-height: 30px;"></div>
       <div class="signature-line"></div>
       <p>(Signature of individual)</p>
     </div>
@@ -388,12 +371,12 @@
   <div class="guardian-line">
     <p>The movement of the trainee in the Factory Site is as per the directives of Shri
       <span
-        class="blank-long">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        class="blank-long">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     </p>
-    <p style="margin-top:4px;">
+    <p style="margin-top:2px;">
       Guardian: Shri
       <span
-        class="blank-long">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        class="blank-long">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       &nbsp;, CM/NT/OTS/PER
     </p>
   </div>

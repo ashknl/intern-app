@@ -194,7 +194,7 @@
         <p>Badmal, Balangir(Odisha) - 767070</p>
       </div>
       <div class="image">
-        <img src="./logo.jpg" alt="" />
+        <img src="{{logo}}" alt="" />
       </div>
       <div class="right-section">
         <p>आयुध निर्माणी वड़माल</p>
@@ -236,7 +236,7 @@
       <div class="letter-content">
         <p>To,</p>
         <p>{{gender_designation}} {{name}}</p>
-        <p>{{university}},{{location}}</p>
+        <p>{{university}}</p>
 
         <br />
         <p>
@@ -249,7 +249,7 @@
         </p>
         <br />
         <div class="letter-body">
-          <p>Dear Mr. {{last_name}},</p>
+          <p>Dear {{gender_designation}} {{last_name}},</p>
           <p>
             &nbsp; &nbsp; With reference to your application dated
             {{application_date}} and recommendation from your College/University
@@ -280,11 +280,8 @@
 
         <div style="text-align: right">
           <p>For Munitions India Limited</p>
-          <img
-            src="signature.jpg"
-            alt=""
-            style="display: block; margin-left: auto; width: 100px"
-          />
+          <br>
+          <br>
           <p>{{signing_officer_name}}</p>
           <p>{{signing_officer_designation}}</p>
         </div>

@@ -9,7 +9,8 @@
     "build:win": "vite build && electron-builder --win --x64",
     "build:linux": "vite build && electron-builder --linux --x64",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed": "node --experimental-sqlite scripts/import-mockdata.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
