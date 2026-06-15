@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer, getDistinctColumn, getAllFeedbacks, insertFeedback, deleteFeedback } from './db/index.js'
-import { generateGatePass, bulkGenerateGatePasses, generateInternshipOffer, type InternData, type InternshipOfferData } from './documents.js'
+import { generateGatePass, bulkGenerateGatePasses, generateInternshipOffer, generateSectionAttachment, generateCertificate, type InternData, type InternshipOfferData } from './documents.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -299,6 +299,21 @@ ipcMain.handle('document:generateInternshipOffer', async (_event, args: {
   } catch (err) {
     return { success: false, error: String(err) }
   }
+})
+
+ipcMain.handle('document:generateSectionAttachment', async (_event, args: {
+  intern: {
+    id: number
+    name: string
+    degree: string
+    branch: string
+    starting_date: string
+    no_of_days: number
+    section_posted: string
+  }
+  gmApprovalDate: string
+}) => {
+  return await generateSectionAttachment(args.intern, { gmApprovalDate: args.gmApprovalDate }, win!)
 })
 
 ipcMain.handle('auth:login', async (_event, args: { username: string; password: string }) => {
