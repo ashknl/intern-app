@@ -136,7 +136,7 @@
         <p>Badmal, Balangir(Odisha) - 767070</p>
       </div>
       <div class="image">
-        <img src={{logo}} alt="" />
+        <img src="{{logo}}" alt="" />
       </div>
       <div class="right-section">
         <p>आयुध निर्माणी वड़माल</p>
@@ -165,13 +165,27 @@
         of Defense from {{start_date}} to {{end_date}}.
       </p>
 
+      <p>During the period of internship, he/she worked in the following areas:</p>
+      <ol type="I" style="font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.8;">
+        {{#each work_areas}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ol>
+
+      <p>His/Her performance and the report has been rated as {{rating}}</p>
+
       <p>
         During the internship programme, he/she was found to be punctual,
         sincere and hardworking.
       </p>
       <p>I wish him/her success in his/her life and career.</p>
 
-      <p align="right">{{signature}}</p>
+      <div style="text-align: right">
+        <p>For Munitions India Limited</p>
+        <p>&nbsp;</p>
+        <p>{{signing_officer_name}}</p>
+        <p>{{signing_officer_designation}}</p>
+      </div>
 
     </section>
 

@@ -298,3 +298,53 @@ export async function generateSectionAttachment(
     return { success: false, error: String(err) }
   }
 }
+
+function compileCertificateHtml(
+  intern: InternData,
+  officer: { name: string; designation: string },
+  opts: { workAreas: string[]; rating: string },
+): string {
+  const templateContent = getTemplate('certificate.html')
+  const compiled = Handlebars.compile(templateContent)
+  return compiled({
+    logo: getLogoDataUrl(),
+    name: intern.name,
+    institution_name: intern.institution_name,
+    start_date: formatDate(intern.starting_date),
+    end_date: computeEndDate(intern.starting_date, intern.no_of_days),
+    work_areas: opts.workAreas,
+    rating: opts.rating,
+    signing_officer_name: officer.name,
+    signing_officer_designation: officer.designation,
+  })
+}
+
+export async function generateCertificate(
+  intern: InternData,
+  officer: { name: string; designation: string },
+  opts: { workAreas: string[]; rating: string },
+  win: BrowserWindow,
+): Promise<{ success: boolean; filePath?: string; error?: string }> {
+  try {
+    const html = compileCertificateHtml(intern, officer, opts)
+    const pdfData = await generatePDF(html)
+
+    const result = await dialog.showSaveDialog(win, {
+      title: 'Save Certificate',
+      defaultPath: path.join(
+        app.getPath('downloads'),
+        `Certificate_${intern.name}.pdf`,
+      ),
+      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    })
+
+    if (result.canceled || !result.filePath) {
+      return { success: false, error: 'Save cancelled' }
+    }
+
+    fs.writeFileSync(result.filePath, pdfData)
+    return { success: true, filePath: result.filePath }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+}

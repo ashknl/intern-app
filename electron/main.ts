@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer, getDistinctColumn, getAllFeedbacks, insertFeedback, deleteFeedback } from './db/index.js'
-import { generateGatePass, bulkGenerateGatePasses, generateInternshipOffer, generateSectionAttachment, type InternData, type InternshipOfferData } from './documents.js'
+import { generateGatePass, bulkGenerateGatePasses, generateInternshipOffer, generateSectionAttachment, generateCertificate, type InternData, type InternshipOfferData } from './documents.js'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -308,6 +308,26 @@ ipcMain.handle('document:generateSectionAttachment', async (_event, args: {
   try {
     return await generateSectionAttachment(args.intern, {
       gmApprovalDate: args.gmApprovalDate,
+    }, win!)
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('document:generateCertificate', async (_event, args: {
+  intern: InternData
+  workAreas: string[]
+  rating: string
+  officerName: string
+  officerDesignation: string
+}) => {
+  try {
+    return await generateCertificate(args.intern, {
+      name: args.officerName,
+      designation: args.officerDesignation,
+    }, {
+      workAreas: args.workAreas,
+      rating: args.rating,
     }, win!)
   } catch (err) {
     return { success: false, error: String(err) }

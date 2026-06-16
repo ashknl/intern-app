@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ArrowUpDown, ChevronLeft, ChevronRight, Printer, Search, X } from 'lucide-react'
 import {
   flexRender, getCoreRowModel, getPaginationRowModel,
@@ -88,85 +88,6 @@ export default function InternshipOffer() {
 
   const selectedOfficer = officers.find((o) => String(o.id) === selectedOfficerId)
 
-  const resultColumns: ColumnDef<Intern>[] = [
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'institution_roll', header: 'Institution Roll' },
-    { accessorKey: 'institution_name', header: 'Institution Name' },
-    {
-      id: 'application_date',
-      header: 'App Date',
-      cell: ({ row }) => (
-        <Input
-          type="date"
-          className="w-32"
-          value={applicationDates[row.original.id] ?? ''}
-          onChange={(e) => setApplicationDates((prev) => ({ ...prev, [row.original.id]: e.target.value }))}
-        />
-      ),
-    },
-    {
-      id: 'noc_date',
-      header: 'NOC Date',
-      cell: ({ row }) => (
-        <Input
-          type="date"
-          className="w-32"
-          value={nocDates[row.original.id] ?? ''}
-          onChange={(e) => setNocDates((prev) => ({ ...prev, [row.original.id]: e.target.value }))}
-        />
-      ),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={generating}
-          onClick={() => handleGenerate(row.original)}
-        >
-          <Printer size={14} />
-          Generate
-        </Button>
-      ),
-    },
-  ]
-
-  const table = useReactTable({
-    data: results,
-    columns: resultColumns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  })
-
-  const handleChange = (field: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleClear = () => {
-    setFilters({ ...EMPTY_FILTERS })
-    setResults([])
-    setSearchError(null)
-    setSorting([])
-  }
-
-  const handleSearch = async () => {
-    setSearchError(null)
-    setSearching(true)
-    const result = await window.ipcRenderer.invoke('search:interns', filters)
-    setSearching(false)
-    if (result.success) {
-      setResults(result.data as Intern[])
-    } else {
-      setSearchError(result.error)
-      setResults([])
-    }
-  }
-
   const handleGenerate = async (intern: Intern) => {
     const appDate = applicationDates[intern.id]
     if (!appDate) {
@@ -200,6 +121,113 @@ export default function InternshipOffer() {
       setGenerateError(String(err))
     } finally {
       setGenerating(false)
+    }
+  }
+
+  const resultColumns = useMemo<ColumnDef<Intern>[]>(() => [
+    { accessorKey: 'name', header: 'Name' },
+    { accessorKey: 'institution_roll', header: 'Institution Roll' },
+    { accessorKey: 'institution_name', header: 'Institution Name' },
+    {
+      id: 'application_date',
+      header: 'App Date',
+      cell: ({ row, table }) => {
+        const meta = table.options.meta as {
+          applicationDates: Record<number, string>
+          setApplicationDate: (id: number, val: string) => void
+        }
+        return (
+          <Input
+            type="date"
+            className="w-32"
+            value={meta.applicationDates[row.original.id] ?? ''}
+            onChange={(e) => meta.setApplicationDate(row.original.id, e.target.value)}
+          />
+        )
+      },
+    },
+    {
+      id: 'noc_date',
+      header: 'NOC Date',
+      cell: ({ row, table }) => {
+        const meta = table.options.meta as {
+          nocDates: Record<number, string>
+          setNocDate: (id: number, val: string) => void
+        }
+        return (
+          <Input
+            type="date"
+            className="w-32"
+            value={meta.nocDates[row.original.id] ?? ''}
+            onChange={(e) => meta.setNocDate(row.original.id, e.target.value)}
+          />
+        )
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row, table }) => {
+        const meta = table.options.meta as {
+          generating: boolean
+          submitOffer: (intern: Intern) => void
+        }
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={meta.generating}
+            onClick={() => meta.submitOffer(row.original)}
+          >
+            <Printer size={14} />
+            Generate
+          </Button>
+        )
+      },
+    },
+  ], [])
+
+  const table = useReactTable({
+    data: results,
+    columns: resultColumns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    meta: {
+      applicationDates,
+      setApplicationDate: (id: number, val: string) =>
+        setApplicationDates((prev) => ({ ...prev, [id]: val })),
+      nocDates,
+      setNocDate: (id: number, val: string) =>
+        setNocDates((prev) => ({ ...prev, [id]: val })),
+      generating,
+      submitOffer: handleGenerate,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  })
+
+  const handleChange = (field: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleClear = () => {
+    setFilters({ ...EMPTY_FILTERS })
+    setResults([])
+    setSearchError(null)
+    setSorting([])
+  }
+
+  const handleSearch = async () => {
+    setSearchError(null)
+    setSearching(true)
+    const result = await window.ipcRenderer.invoke('search:interns', filters)
+    setSearching(false)
+    if (result.success) {
+      setResults(result.data as Intern[])
+    } else {
+      setSearchError(result.error)
+      setResults([])
     }
   }
 
