@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowUpDown, ChevronLeft, ChevronRight, FileBarChart, Search, X } from 'lucide-react';
+import { ArrowUpDown, ChevronLeft, ChevronRight, FileBarChart, Printer, Search, X } from 'lucide-react';
 import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type SortingState } from '@tanstack/react-table';
 import type { Intern } from '@/lib/IIntern';
 import { Button } from '@/components/ui/button';
@@ -117,9 +117,9 @@ export default function Reports() {
             <h2 className="text-2xl font-bold flex items-center gap-2">
                 <FileBarChart size={24} /> Reports
             </h2>
-            <p className="mt-2 text-muted-foreground">View and generate reports.</p>
+            <p className="mt-2 text-muted-foreground no-print">View and generate reports.</p>
 
-            <Card className="mt-6">
+            <Card className="mt-6 no-print">
                 <CardHeader>
                     <CardTitle>Search Filters</CardTitle>
                 </CardHeader>
@@ -173,11 +173,20 @@ export default function Reports() {
             </Card>
 
             {searchError && (
-                <p className="mt-4 text-sm text-destructive">{searchError}</p>
+                <p className="mt-4 text-sm text-destructive no-print">{searchError}</p>
             )}
 
             {results.length > 0 && (
-                <Card className="mt-6">
+                <Card className="mt-6" id="reports-table">
+                    <CardHeader className="py-3 no-print">
+                        <CardTitle className="text-base flex items-center justify-between">
+                            Results
+                            <Button variant="outline" size="sm" onClick={() => window.print()}>
+                                <Printer size={14} />
+                                Print
+                            </Button>
+                        </CardTitle>
+                    </CardHeader>
                     <CardContent className="p-0">
                         <Table>
                             <TableHeader>
@@ -213,7 +222,7 @@ export default function Reports() {
                             </TableBody>
                         </Table>
 
-                        <div className="flex items-center justify-between px-4 py-4 border-t">
+                        <div className="flex items-center justify-between px-4 py-4 border-t no-print">
                             <span className="text-sm text-muted-foreground">
                                 Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                             </span>

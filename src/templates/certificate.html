@@ -6,11 +6,19 @@
     <title>Certificate</title>
 
     <style>
-      *, *::before, *::after { box-sizing: border-box; }
-      *:not(dialog) { margin: 0; }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      *:not(dialog) {
+        margin: 0;
+      }
 
       @media (prefers-reduced-motion: no-preference) {
-        html { interpolate-size: allow-keywords; }
+        html {
+          interpolate-size: allow-keywords;
+        }
       }
 
       body {
@@ -18,18 +26,47 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      img, picture, video, canvas, svg {
+      img,
+      picture,
+      video,
+      canvas,
+      svg {
         display: block;
         max-width: 100%;
       }
 
-      input, button, textarea, select { font: inherit; }
+      input,
+      button,
+      textarea,
+      select {
+        font: inherit;
+      }
 
-      p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
-      p { text-wrap: pretty; }
-      h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        overflow-wrap: break-word;
+      }
+      p {
+        text-wrap: pretty;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        text-wrap: balance;
+      }
 
-      #root, #__next { isolation: isolate; }
+      #root,
+      #__next {
+        isolation: isolate;
+      }
 
       /* ── PAGE ── */
       body {
@@ -70,7 +107,11 @@
         text-align: center;
       }
 
-      .image img { width: 110px; height: auto; margin: 0 auto; }
+      .image img {
+        width: 110px;
+        height: auto;
+        margin: 0 auto;
+      }
 
       /* ── DIVIDERS ── */
       .line-break {
@@ -101,7 +142,7 @@
       }
 
       .content p {
-        font-family: 'Times New Roman', serif;
+        font-family: "Times New Roman", serif;
         font-size: 10.5pt;
         line-height: 1.45;
         padding: 3px 0;
@@ -139,7 +180,10 @@
       }
 
       @media print {
-        body { margin: 0; padding: 14mm 18mm 12mm; }
+        body {
+          margin: 0;
+          padding: 14mm 18mm 12mm;
+        }
       }
     </style>
   </head>
@@ -166,9 +210,15 @@
 
     <hr class="line-break" />
     <div class="line-break-text-container">
-      <span class="line-break-text"><b>फ़ोन </b> / Phone: 06655-250 969 - 973</span>
-      <span class="line-break-text"><b>फ़ैक्स</b> / FAX: 06655-250 561/250271</span>
-      <span class="line-break-text"><b>ईमेल </b> / email: gm_ofbol@ord.gov.in</span>
+      <span class="line-break-text"
+        ><b>फ़ोन </b> / Phone: 06655-250 969 - 973</span
+      >
+      <span class="line-break-text"
+        ><b>फ़ैक्स</b> / FAX: 06655-250 561/250271</span
+      >
+      <span class="line-break-text"
+        ><b>ईमेल </b> / email: gm_ofbol@ord.gov.in</span
+      >
     </div>
     <hr class="line-break" />
 
@@ -182,14 +232,20 @@
         of Defense from {{start_date}} to {{end_date}}.
       </p>
 
-      <p>During the period of internship, he/she worked in the following areas:</p>
+      <p>
+        During the period of internship, he/she worked in the following areas:
+      </p>
       <ol class="content" type="I">
-        {{#each work_areas}}
-        <li>{{this}}</li>
-        {{/each}}
+        <b>
+          {{#each work_areas}}
+          <li>{{this}}</li>
+          {{/each}}
+        </b>
       </ol>
 
-      <p>His/Her performance and the report has been rated as {{rating}}</p>
+      <p>
+        His/Her performance and the report has been rated as <b> {{rating}} </b>
+      </p>
 
       <p>
         During the internship programme, he/she was found to be punctual,
@@ -203,7 +259,6 @@
         <p>{{signing_officer_name}}</p>
         <p>{{signing_officer_designation}}</p>
       </div>
-
     </section>
 
     <hr class="line-break" />
@@ -211,10 +266,19 @@
     <section class="footer">
       <p>CIN No.U29190PN2021GOI203505</p>
       <p>पंजीकृतपता: गोलाबारूदनिर्माणीखड़की, पुणे–४११००३(महाराष्ट्र)</p>
-      <p>Regd.Address:Ammunition Factory, Khadki, Pune –411003 (Maharashtra) </p>
-      <p>निगमितकार्यालयपता : दूसरीमंजिल, न्यातियुनिट्री, नगररोड, येरवडा, पुणे–४११००६(महाराष्ट्र) </p>
-      <p>Corporate Office Address: 2nd Floor, NyatiUnitree,Nagar Road, Yerwada, Pune- 411006 (Maharashtra) </p>
-      <p>दूरभाषसं /Phone No.020-67080400, Email ID : mil-pune@munitionsindia.in website – https://munitionsindia.in </p>
+      <p>Regd.Address:Ammunition Factory, Khadki, Pune –411003 (Maharashtra)</p>
+      <p>
+        निगमितकार्यालयपता : दूसरीमंजिल, न्यातियुनिट्री, नगररोड, येरवडा,
+        पुणे–४११००६(महाराष्ट्र)
+      </p>
+      <p>
+        Corporate Office Address: 2nd Floor, NyatiUnitree,Nagar Road, Yerwada,
+        Pune- 411006 (Maharashtra)
+      </p>
+      <p>
+        दूरभाषसं /Phone No.020-67080400, Email ID : mil-pune@munitionsindia.in
+        website – https://munitionsindia.in
+      </p>
     </section>
   </body>
 </html>
