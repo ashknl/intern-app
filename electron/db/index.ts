@@ -223,7 +223,7 @@ export function getAllUsers(): SafeUserRow[] {
   const stmt = database.prepare(
     'SELECT id, username, security_question, created_at FROM users ORDER BY username ASC',
   )
-  return stmt.all() as SafeUserRow[]
+  return stmt.all() as unknown as SafeUserRow[]
 }
 
 const DISTINCT_COLUMNS = new Set([
@@ -253,7 +253,7 @@ export function getAllOfficers(): OfficerRow[] {
   const stmt = database.prepare(
     'SELECT id, officer_name, officer_designation, created_at FROM signing_officers ORDER BY officer_name ASC',
   )
-  return stmt.all() as OfficerRow[]
+  return stmt.all() as unknown as OfficerRow[]
 }
 
 export function insertOfficer(name: string, designation: string): number {
@@ -292,7 +292,7 @@ export function getAllFeedbacks(): FeedbackDisplayRow[] {
     JOIN interns i ON f.id = i.id
     ORDER BY f.created_at DESC
   `)
-  return stmt.all() as FeedbackDisplayRow[]
+  return stmt.all() as unknown as FeedbackDisplayRow[]
 }
 
 export function insertFeedback(internId: number, feedbackText: string): void {

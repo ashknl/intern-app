@@ -20,10 +20,10 @@ interface Intern {
   name: string
   institution_roll: string
   institution_name: string
-  degree: string
-  branch: string
   starting_date: string
   no_of_days: number
+  degree: string
+  branch: string
   section_posted: string
 }
 
@@ -61,7 +61,6 @@ export default function SectionAttachment() {
   const [options, setOptions] = useState<Record<string, string[]>>({})
 
   const [gmApprovalDate, setGmApprovalDate] = useState('')
-
   const [generating, setGenerating] = useState(false)
   const [generateError, setGenerateError] = useState<string | null>(null)
 
@@ -142,10 +141,11 @@ export default function SectionAttachment() {
         intern: {
           id: intern.id,
           name: intern.name,
-          degree: intern.degree,
-          branch: intern.branch,
+          institution_name: intern.institution_name,
           starting_date: intern.starting_date,
           no_of_days: intern.no_of_days,
+          degree: intern.degree,
+          branch: intern.branch,
           section_posted: intern.section_posted,
         },
         gmApprovalDate,
@@ -168,7 +168,7 @@ export default function SectionAttachment() {
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Document Options</CardTitle>
+          <CardTitle>Configuration</CardTitle>
         </CardHeader>
         <CardContent>
           <Field>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ArrowUpDown, ChevronLeft, ChevronRight, Printer, Search, X } from 'lucide-react'
 import {
   flexRender, getCoreRowModel, getPaginationRowModel,
@@ -7,7 +7,6 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Select } from '@/components/ui/select'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -19,7 +18,6 @@ import {
 interface Intern {
   id: number
   name: string
-  institution_roll: string
   institution_name: string
   starting_date: string
   no_of_days: number
@@ -55,6 +53,8 @@ const EMPTY_FILTERS = {
   institution_name: '',
 }
 
+const RATING_OPTIONS = ['OUTSTANDING', 'EXCELLENT', 'GOOD', 'SATISFACTORY', 'NEEDS IMPROVEMENTS']
+
 export default function Certificate() {
   const [filters, setFilters] = useState({ ...EMPTY_FILTERS })
   const [results, setResults] = useState<Intern[]>([])
@@ -68,6 +68,7 @@ export default function Certificate() {
 
   const [workAreas, setWorkAreas] = useState<Record<number, string>>({})
   const [ratings, setRatings] = useState<Record<number, string>>({})
+  const [feedbackIds, setFeedbackIds] = useState<Set<number>>(new Set())
 
   const [generating, setGenerating] = useState(false)
   const [generateError, setGenerateError] = useState<string | null>(null)
@@ -84,60 +85,143 @@ export default function Certificate() {
         setSelectedOfficerId(String((r.data as Officer[])[0].id))
       }
     })
+    window.ipcRenderer.invoke('feedback:getAllFeedbacks').then((r) => {
+      if (r.success) {
+        setFeedbackIds(new Set((r.data as { id: number }[]).map((f) => f.id)))
+      }
+    })
   }, [])
 
   const selectedOfficer = officers.find((o) => String(o.id) === selectedOfficerId)
 
-  const resultColumns: ColumnDef<Intern>[] = [
+  const handleGenerate = async (intern: Intern) => {
+    const areasText = workAreas[intern.id] ?? ''
+    const areasList = areasText
+      .split('\n')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
+    const rating = ratings[intern.id] ?? ''
+
+    if (areasList.length === 0) {
+      setGenerateError('Please enter at least one work area.')
+      return
+    }
+    if (!rating) {
+      setGenerateError('Please select a rating.')
+      return
+    }
+
+    setGenerateError(null)
+    setGenerating(true)
+
+    try {
+      const result = await window.ipcRenderer.invoke('document:generateCertificate', {
+        intern: {
+          id: intern.id,
+          name: intern.name,
+          institution_name: intern.institution_name,
+          starting_date: intern.starting_date,
+          no_of_days: intern.no_of_days,
+        },
+        workAreas: areasList,
+        rating,
+        officerName: selectedOfficer?.officer_name ?? '',
+        officerDesignation: selectedOfficer?.officer_designation ?? '',
+      })
+
+      if (!result.success && result.error !== 'Save cancelled') {
+        setGenerateError(result.error)
+      }
+    } catch (err) {
+      setGenerateError(String(err))
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  const resultColumns = useMemo<ColumnDef<Intern>[]>(() => [
     { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'institution_roll', header: 'Institution Roll' },
     { accessorKey: 'institution_name', header: 'Institution Name' },
     {
       id: 'work_areas',
       header: 'Work Areas',
-      cell: ({ row }) => (
-        <Textarea
-          className="w-48 text-xs"
-          rows={3}
-          placeholder="One per line"
-          value={workAreas[row.original.id] ?? ''}
-          onChange={(e) => setWorkAreas((prev) => ({ ...prev, [row.original.id]: e.target.value }))}
-        />
-      ),
+      cell: ({ row, table }) => {
+        const meta = table.options.meta as {
+          workAreas: Record<number, string>
+          setWorkArea: (id: number, text: string) => void
+        }
+        return (
+          <textarea
+            className="h-8 w-full min-w-[200px] rounded-xl border border-input/50 bg-input/50 px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
+            rows={1}
+            value={meta.workAreas[row.original.id] ?? ''}
+            onChange={(e) => meta.setWorkArea(row.original.id, e.target.value)}
+          />
+        )
+      },
     },
     {
       id: 'rating',
       header: 'Rating',
-      cell: ({ row }) => (
-        <Input
-          className="w-28"
-          value={ratings[row.original.id] ?? ''}
-          onChange={(e) => setRatings((prev) => ({ ...prev, [row.original.id]: e.target.value }))}
-        />
-      ),
+      cell: ({ row, table }) => {
+        const meta = table.options.meta as {
+          ratings: Record<number, string>
+          setRating: (id: number, val: string) => void
+        }
+        return (
+          <Select
+            value={meta.ratings[row.original.id] ?? ''}
+            onChange={(e) => meta.setRating(row.original.id, e.target.value)}
+          >
+            <option value="">Select</option>
+            {RATING_OPTIONS.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </Select>
+        )
+      },
     },
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }) => (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={generating}
-          onClick={() => handleGenerate(row.original)}
-        >
-          <Printer size={14} />
-          Generate
-        </Button>
-      ),
+      cell: ({ row, table }) => {
+        const meta = table.options.meta as {
+          generating: boolean
+          feedbackIds: Set<number>
+          submitCertificate: (intern: Intern) => void
+        }
+        const hasFeedback = meta.feedbackIds.has(row.original.id)
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={meta.generating || !hasFeedback}
+            onClick={() => meta.submitCertificate(row.original)}
+          >
+            <Printer size={14} />
+            {hasFeedback ? 'Generate' : 'No Feedback'}
+          </Button>
+        )
+      },
     },
-  ]
+  ], [])
 
   const table = useReactTable({
     data: results,
     columns: resultColumns,
     state: { sorting },
     onSortingChange: setSorting,
+    meta: {
+      workAreas,
+      setWorkArea: (id: number, text: string) =>
+        setWorkAreas((prev) => ({ ...prev, [id]: text })),
+      ratings,
+      setRating: (id: number, val: string) =>
+        setRatings((prev) => ({ ...prev, [id]: val })),
+      generating,
+      feedbackIds,
+      submitCertificate: handleGenerate,
+    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -164,46 +248,6 @@ export default function Certificate() {
     } else {
       setSearchError(result.error)
       setResults([])
-    }
-  }
-
-  const handleGenerate = async (intern: Intern) => {
-    const areas = (workAreas[intern.id] ?? '').split('\n').map((s) => s.trim()).filter(Boolean)
-    if (areas.length === 0) {
-      setGenerateError('Please fill in at least one Work Area.')
-      return
-    }
-    const rating = (ratings[intern.id] ?? '').trim()
-    if (!rating) {
-      setGenerateError('Please fill in the Rating.')
-      return
-    }
-
-    setGenerateError(null)
-    setGenerating(true)
-
-    try {
-      const result = await window.ipcRenderer.invoke('document:generateCertificate', {
-        intern: {
-          id: intern.id,
-          name: intern.name,
-          institution_name: intern.institution_name,
-          starting_date: intern.starting_date,
-          no_of_days: intern.no_of_days,
-        },
-        workAreas: areas,
-        rating,
-        officerName: selectedOfficer?.officer_name ?? '',
-        officerDesignation: selectedOfficer?.officer_designation ?? '',
-      })
-
-      if (!result.success && result.error !== 'Save cancelled') {
-        setGenerateError(result.error)
-      }
-    } catch (err) {
-      setGenerateError(String(err))
-    } finally {
-      setGenerating(false)
     }
   }
 

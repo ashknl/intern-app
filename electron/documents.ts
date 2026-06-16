@@ -19,6 +19,7 @@ export interface InternData {
   branch?: string
   identification_mark?: string
   gender?: string
+  section_posted?: string
 }
 
 export function formatDate(dateStr: string): string {
@@ -256,8 +257,8 @@ export async function bulkGenerateGatePasses(
 }
 
 function compileSectionAttachmentHtml(
-  intern: InternData & { degree: string; branch: string; section_posted: string },
-  opts: { gmApprovalDate: string; serial: string },
+  intern: InternData & { degree?: string; branch?: string; section_posted?: string },
+  opts: { serial: string; gmApprovalDate: string },
 ): string {
   const templateContent = getTemplate('section_attachment.html')
   const compiled = Handlebars.compile(templateContent)
@@ -265,25 +266,25 @@ function compileSectionAttachmentHtml(
     logo: getLogoDataUrl(),
     year_range: computeYearRange(intern.starting_date),
     serial: opts.serial,
-    generation_date: todayDotDate(),
+    generation_date: todayDate(),
     gm_approval_date: formatSimpleDate(opts.gmApprovalDate),
     name: intern.name,
-    degree: intern.degree,
-    branch: intern.branch,
+    degree: intern.degree ?? '',
+    branch: intern.branch ?? '',
     start_date: formatDate(intern.starting_date),
     end_date: computeEndDate(intern.starting_date, intern.no_of_days),
-    section_name: intern.section_posted,
+    section_name: intern.section_posted ?? '',
   })
 }
 
 export async function generateSectionAttachment(
-  intern: InternData & { degree: string; branch: string; section_posted: string },
+  intern: InternData & { degree?: string; branch?: string; section_posted?: string },
   opts: { gmApprovalDate: string },
   win: BrowserWindow,
 ): Promise<{ success: boolean; filePath?: string; error?: string }> {
   try {
     const serial = String(intern.id ?? '')
-    const html = compileSectionAttachmentHtml(intern, { gmApprovalDate: opts.gmApprovalDate, serial })
+    const html = compileSectionAttachmentHtml(intern, { serial, gmApprovalDate: opts.gmApprovalDate })
     const pdfData = await generatePDF(html)
 
     const result = await dialog.showSaveDialog(win, {
@@ -321,8 +322,8 @@ function compileCertificateHtml(
     end_date: computeEndDate(intern.starting_date, intern.no_of_days),
     work_areas: opts.workAreas,
     rating: opts.rating,
-    officer_name: officer.name,
-    officer_designation: officer.designation,
+    signing_officer_name: officer.name,
+    signing_officer_designation: officer.designation,
   })
 }
 

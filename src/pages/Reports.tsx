@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowUpDown, ChevronLeft, ChevronRight, FileBarChart, Search, X } from 'lucide-react';
 import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type SortingState } from '@tanstack/react-table';
 import type { Intern } from '@/lib/IIntern';
@@ -21,12 +21,16 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
-const YEAR_OPTIONS = ['1st', '2nd', '3rd', '4th'];
-const SECTION_OPTIONS = ['ITC', 'HRD', 'UNIT-1', 'UNIT-2', 'UNIT-3', 'UNIT-4'];
-const BRANCH_OPTIONS = [
-  'CSE', 'MECH', 'CHE', 'EE', 'EEE', 'ECE',
-  'BIOTECH', 'MINING', 'FOOD', 'METALLURGY', 'CERAMIC',
-];
+const SEARCH_FIELDS = [
+  { field: 'name', label: 'Name' },
+  { field: 'institution_roll', label: 'Institution Roll' },
+  { field: 'guardian_name', label: 'Guardian Name' },
+  { field: 'guardian_relation', label: 'Guardian Relation' },
+  { field: 'branch', label: 'Branch' },
+  { field: 'year_of_study', label: 'Year of Study' },
+  { field: 'section_posted', label: 'Section Posted' },
+  { field: 'institution_name', label: 'Institution Name' },
+] as const;
 
 const EMPTY_FILTERS = {
     name: '',
@@ -60,6 +64,16 @@ export default function Reports() {
     const [searchError, setSearchError] = useState<string | null>(null);
     const [searching, setSearching] = useState(false);
     const [sorting, setSorting] = useState<SortingState>([]);
+
+    const [options, setOptions] = useState<Record<string, string[]>>({});
+
+    useEffect(() => {
+        for (const { field } of SEARCH_FIELDS) {
+            window.ipcRenderer.invoke('search:distinctValues', { column: field }).then((r) => {
+                if (r.success) setOptions((prev) => ({ ...prev, [field]: r.data as string[] }))
+            })
+        }
+    }, []);
 
     const table = useReactTable({
         data: results,
@@ -112,66 +126,20 @@ export default function Reports() {
                 <CardContent>
                     <FieldGroup className="@container">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                            <Field>
-                                <FieldLabel>Name</FieldLabel>
-                                <Input
-                                    type="text"
-                                    value={filters.name}
-                                    onChange={(e) => handleChange('name', e.target.value)}
-                                />
-                            </Field>
-                            <Field>
-                                <FieldLabel>Institution Roll</FieldLabel>
-                                <Input
-                                    type="text"
-                                    value={filters.institution_roll}
-                                    onChange={(e) => handleChange('institution_roll', e.target.value)}
-                                />
-                            </Field>
-                            <Field>
-                                <FieldLabel>Guardian Name</FieldLabel>
-                                <Input
-                                    type="text"
-                                    value={filters.guardian_name}
-                                    onChange={(e) => handleChange('guardian_name', e.target.value)}
-                                />
-                            </Field>
-                            <Field>
-                                <FieldLabel>Guardian Relation</FieldLabel>
-                                <Input
-                                    type="text"
-                                    value={filters.guardian_relation}
-                                    onChange={(e) => handleChange('guardian_relation', e.target.value)}
-                                />
-                            </Field>
-                            <Field>
-                                <FieldLabel>Branch</FieldLabel>
-                                <Select
-                                    value={filters.branch}
-                                    onChange={(e) => handleChange('branch', e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {BRANCH_OPTIONS.map((branch) => (
-                                        <option key={branch} value={branch}>
-                                            {branch}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </Field>
-                            <Field>
-                                <FieldLabel>Year of Study</FieldLabel>
-                                <Select
-                                    value={filters.year_of_study}
-                                    onChange={(e) => handleChange('year_of_study', e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {YEAR_OPTIONS.map((year) => (
-                                        <option key={year} value={year}>
-                                            {year}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </Field>
+                            {SEARCH_FIELDS.map(({ field, label }) => (
+                                <Field key={field}>
+                                    <FieldLabel>{label}</FieldLabel>
+                                    <Select
+                                        value={filters[field]}
+                                        onChange={(e) => handleChange(field, e.target.value)}
+                                    >
+                                        <option value="">All</option>
+                                        {(options[field] ?? []).map((val) => (
+                                            <option key={val} value={val}>{val}</option>
+                                        ))}
+                                    </Select>
+                                </Field>
+                            ))}
                             <Field>
                                 <FieldLabel>Starting Date</FieldLabel>
                                 <Input
@@ -186,28 +154,6 @@ export default function Reports() {
                                     type="number"
                                     value={filters.no_of_days}
                                     onChange={(e) => handleChange('no_of_days', e.target.value)}
-                                />
-                            </Field>
-                            <Field>
-                                <FieldLabel>Section Posted</FieldLabel>
-                                <Select
-                                    value={filters.section_posted}
-                                    onChange={(e) => handleChange('section_posted', e.target.value)}
-                                >
-                                    <option value="">All</option>
-                                    {SECTION_OPTIONS.map((section) => (
-                                        <option key={section} value={section}>
-                                            {section}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </Field>
-                            <Field>
-                                <FieldLabel>Institution Name</FieldLabel>
-                                <Input
-                                    type="text"
-                                    value={filters.institution_name}
-                                    onChange={(e) => handleChange('institution_name', e.target.value)}
                                 />
                             </Field>
                         </div>
