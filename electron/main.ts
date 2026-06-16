@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer, getDistinctColumn, getAllFeedbacks, insertFeedback, deleteFeedback } from './db/index.js'
+import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, getUserSecurityQuestion, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer, getDistinctColumn, getAllFeedbacks, insertFeedback, deleteFeedback } from './db/index.js'
 import { generateGatePass, bulkGenerateGatePasses, generateInternshipOffer, generateSectionAttachment, generateCertificate, type InternData, type InternshipOfferData } from './documents.js'
 
 const require = createRequire(import.meta.url)
@@ -343,6 +343,34 @@ ipcMain.handle('auth:login', async (_event, args: { username: string; password: 
     const match = bcryptjs.compareSync(args.password, user.password_hash)
     if (!match) {
       return { success: false, error: 'Invalid username or password.' }
+    }
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('auth:getSecurityQuestion', async (_event, args: { username: string }) => {
+  try {
+    const question = getUserSecurityQuestion(args.username)
+    if (!question) {
+      return { success: false, error: 'User not found.' }
+    }
+    return { success: true, question }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('auth:verifySecurityAnswer', async (_event, args: { username: string; answer: string }) => {
+  try {
+    const user = getUserByUsername(args.username)
+    if (!user) {
+      return { success: false, error: 'User not found.' }
+    }
+    const match = bcryptjs.compareSync(args.answer, user.security_answer_hash)
+    if (!match) {
+      return { success: false, error: 'Incorrect answer.' }
     }
     return { success: true }
   } catch (err) {

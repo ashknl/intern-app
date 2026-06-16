@@ -90,22 +90,39 @@
       /* ── CONTENT ── */
       .section-header {
         text-align: center;
-        font-size: 13pt;
-        margin: 22px 0 18px;
+        font-size: 12pt;
+        margin: 14px 0 10px;
       }
 
       .content {
         width: 100%;
         padding: 0;
-        padding-bottom: 3rem;
+        padding-bottom: 1.5rem;
       }
 
       .content p {
         font-family: 'Times New Roman', serif;
-        font-size: 12pt;
-        line-height: 1.8;
-        padding: 6px 0;
+        font-size: 10.5pt;
+        line-height: 1.45;
+        padding: 3px 0;
         text-align: justify;
+      }
+
+      .content ol {
+        font-size: 10.5pt;
+        line-height: 1.45;
+        padding-left: 20px;
+      }
+
+      .content .signature {
+        text-align: right;
+        margin-top: 10px;
+      }
+
+      .content .signature p {
+        text-align: right;
+        line-height: 1.4;
+        padding: 1px 0;
       }
 
       /* ── FOOTER ── */
@@ -166,7 +183,7 @@
       </p>
 
       <p>During the period of internship, he/she worked in the following areas:</p>
-      <ol type="I" style="font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.8;">
+      <ol class="content" type="I">
         {{#each work_areas}}
         <li>{{this}}</li>
         {{/each}}
@@ -180,7 +197,7 @@
       </p>
       <p>I wish him/her success in his/her life and career.</p>
 
-      <div style="text-align: right">
+      <div class="signature">
         <p>For Munitions India Limited</p>
         <p>&nbsp;</p>
         <p>{{signing_officer_name}}</p>

@@ -68,6 +68,7 @@ export default function Certificate() {
 
   const [workAreas, setWorkAreas] = useState<Record<number, string>>({})
   const [ratings, setRatings] = useState<Record<number, string>>({})
+  const [feedbackIds, setFeedbackIds] = useState<Set<number>>(new Set())
 
   const [generating, setGenerating] = useState(false)
   const [generateError, setGenerateError] = useState<string | null>(null)
@@ -82,6 +83,11 @@ export default function Certificate() {
       if (r.success && r.data?.length) {
         setOfficers(r.data as Officer[])
         setSelectedOfficerId(String((r.data as Officer[])[0].id))
+      }
+    })
+    window.ipcRenderer.invoke('feedback:getAllFeedbacks').then((r) => {
+      if (r.success) {
+        setFeedbackIds(new Set((r.data as { id: number }[]).map((f) => f.id)))
       }
     })
   }, [])
@@ -181,17 +187,19 @@ export default function Certificate() {
       cell: ({ row, table }) => {
         const meta = table.options.meta as {
           generating: boolean
+          feedbackIds: Set<number>
           submitCertificate: (intern: Intern) => void
         }
+        const hasFeedback = meta.feedbackIds.has(row.original.id)
         return (
           <Button
             size="sm"
             variant="outline"
-            disabled={meta.generating}
+            disabled={meta.generating || !hasFeedback}
             onClick={() => meta.submitCertificate(row.original)}
           >
             <Printer size={14} />
-            Generate
+            {hasFeedback ? 'Generate' : 'No Feedback'}
           </Button>
         )
       },
@@ -211,6 +219,7 @@ export default function Certificate() {
       setRating: (id: number, val: string) =>
         setRatings((prev) => ({ ...prev, [id]: val })),
       generating,
+      feedbackIds,
       submitCertificate: handleGenerate,
     },
     getCoreRowModel: getCoreRowModel(),
