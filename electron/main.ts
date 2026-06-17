@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, getUserSecurityQuestion, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer, getDistinctColumn, getAllFeedbacks, insertFeedback, deleteFeedback } from './db/index.js'
+import { getDb, insertInterns, searchInterns, getAllInterns, getUserByUsername, getUserSecurityQuestion, insertManualIntern, getAllUsers, createUser, getAllOfficers, insertOfficer, deleteOfficer, getDistinctColumn, getAllFeedbacks, insertFeedback, deleteFeedback, deleteIntern } from './db/index.js'
 import { generateGatePass, bulkGenerateGatePasses, generateInternshipOffer, generateSectionAttachment, generateCertificate, type InternData, type InternshipOfferData } from './documents.js'
 
 const require = createRequire(import.meta.url)
@@ -503,6 +503,18 @@ ipcMain.handle('feedback:deleteFeedback', async (_event, args: { internId: numbe
     const deleted = deleteFeedback(args.internId)
     if (!deleted) {
       return { success: false, error: 'Feedback not found.' }
+    }
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+})
+
+ipcMain.handle('admin:deleteIntern', async (_event, args: { id: number }) => {
+  try {
+    const deleted = deleteIntern(args.id)
+    if (!deleted) {
+      return { success: false, error: 'Intern not found.' }
     }
     return { success: true }
   } catch (err) {

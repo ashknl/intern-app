@@ -1,19 +1,19 @@
 import { useState, useEffect, useMemo } from 'react'
-import { ArrowUpDown, ChevronLeft, ChevronRight, Printer, Search, X } from 'lucide-react'
+import { ArrowUpDown, ChevronLeft, ChevronRight, Printer } from 'lucide-react'
 import {
   flexRender, getCoreRowModel, getPaginationRowModel,
   getSortedRowModel, useReactTable,
   type ColumnDef, type SortingState,
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldLabel } from '@/components/ui/field'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table, TableBody, TableCell,
   TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
+import SearchFilters, { EMPTY_FILTERS } from '@/components/SearchFilters'
 
 interface Intern {
   id: number
@@ -29,30 +29,6 @@ interface Officer {
   officer_designation: string
 }
 
-const SEARCH_FIELDS = [
-  { field: 'name', label: 'Name' },
-  { field: 'institution_roll', label: 'Institution Roll' },
-  { field: 'guardian_name', label: 'Guardian Name' },
-  { field: 'guardian_relation', label: 'Guardian Relation' },
-  { field: 'branch', label: 'Branch' },
-  { field: 'year_of_study', label: 'Year of Study' },
-  { field: 'section_posted', label: 'Section Posted' },
-  { field: 'institution_name', label: 'Institution Name' },
-] as const
-
-const EMPTY_FILTERS = {
-  name: '',
-  institution_roll: '',
-  guardian_name: '',
-  guardian_relation: '',
-  branch: '',
-  year_of_study: '',
-  starting_date: '',
-  no_of_days: '',
-  section_posted: '',
-  institution_name: '',
-}
-
 const RATING_OPTIONS = ['OUTSTANDING', 'EXCELLENT', 'GOOD', 'SATISFACTORY', 'NEEDS IMPROVEMENTS']
 
 export default function Certificate() {
@@ -62,7 +38,6 @@ export default function Certificate() {
   const [searching, setSearching] = useState(false)
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const [options, setOptions] = useState<Record<string, string[]>>({})
   const [officers, setOfficers] = useState<Officer[]>([])
   const [selectedOfficerId, setSelectedOfficerId] = useState('')
 
@@ -74,11 +49,6 @@ export default function Certificate() {
   const [generateError, setGenerateError] = useState<string | null>(null)
 
   useEffect(() => {
-    for (const { field } of SEARCH_FIELDS) {
-      window.ipcRenderer.invoke('search:distinctValues', { column: field }).then((r) => {
-        if (r.success) setOptions((prev) => ({ ...prev, [field]: r.data as string[] }))
-      })
-    }
     window.ipcRenderer.invoke('admin:getAllOfficers').then((r) => {
       if (r.success && r.data?.length) {
         setOfficers(r.data as Officer[])
@@ -227,10 +197,6 @@ export default function Certificate() {
     getSortedRowModel: getSortedRowModel(),
   })
 
-  const handleChange = (field: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [field]: value }))
-  }
-
   const handleClear = () => {
     setFilters({ ...EMPTY_FILTERS })
     setResults([])
@@ -279,58 +245,13 @@ export default function Certificate() {
         </Card>
       )}
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Search Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FieldGroup className="@container">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {SEARCH_FIELDS.map(({ field, label }) => (
-                <Field key={field}>
-                  <FieldLabel>{label}</FieldLabel>
-                  <Select
-                    value={filters[field as keyof typeof EMPTY_FILTERS]}
-                    onChange={(e) => handleChange(field, e.target.value)}
-                  >
-                    <option value="">All</option>
-                    {(options[field] ?? []).map((val) => (
-                      <option key={val} value={val}>{val}</option>
-                    ))}
-                  </Select>
-                </Field>
-              ))}
-              <Field>
-                <FieldLabel>Starting Date</FieldLabel>
-                <Input
-                  type="date"
-                  value={filters.starting_date}
-                  onChange={(e) => handleChange('starting_date', e.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel>No. of Days</FieldLabel>
-                <Input
-                  type="number"
-                  value={filters.no_of_days}
-                  onChange={(e) => handleChange('no_of_days', e.target.value)}
-                />
-              </Field>
-            </div>
-
-            <div className="mt-6 flex gap-2">
-              <Button onClick={handleSearch} disabled={searching}>
-                <Search />
-                {searching ? 'Searching...' : 'Search'}
-              </Button>
-              <Button variant="outline" onClick={handleClear} disabled={searching}>
-                <X />
-                Clear
-              </Button>
-            </div>
-          </FieldGroup>
-        </CardContent>
-      </Card>
+      <SearchFilters
+        filters={filters}
+        onFilterChange={(field, value) => setFilters((prev) => ({ ...prev, [field]: value }))}
+        onSearch={handleSearch}
+        onClear={handleClear}
+        searching={searching}
+      />
 
       {searchError && (
         <p className="mt-4 text-sm text-destructive">{searchError}</p>
