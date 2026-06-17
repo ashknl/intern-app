@@ -31,7 +31,7 @@ const BRANCH_OPTIONS = [
 
 const YEAR_OPTIONS = ["1st", "2nd", "3rd", "4th"];
 
-const SECTION_OPTIONS = ["ITC", "HRD", "UNIT-1", "UNIT-2", "UNIT-3", "UNIT-4"];
+const SECTION_OPTIONS = ["AUDIT","BDU EXPORT","BG","CANTEEN","CASH","CM","D & LS","EMS","EO","EP","ES","ESTT","F & A","FB","GA MISC","GMS","GST","HOSPITAL","HRD","ISO","ISOVENDOR","ITC","LB","LS","LWO","M.S","MCO","MFM","MT","PENSION CELL","PO","PR CELL","PS","PV D","PV IND","QA","QAG","QA(TC)","QCLAB","QCMI","QCP","QC_EP","QC_U01","QC_U03","QC_U04","QC_U05","QC_U06","QC_U10","QC_U17","QCPR","QMAG","QMI","RND","SAFETY","SCST CELL","SO","STDCELL","STORE","STORE.SIT","SV","SVG","TEST","TNG","U01","U02","U03","U04","U05","U05 DB","U05_CONTROL_ROOM","U10","U10_CONTROL_ROOM","U17","UNIT06","UNITRUN CANTEEN","VO_MIL","WS","YNE"];
 
 const GENDER_OPTIONS = ["Male", "Female", "Other"];
 
@@ -102,6 +102,10 @@ export default function AddData() {
   const [formError, setFormError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [registering, setRegistering] = useState(false);
+  const [branchOtherMode, setBranchOtherMode] = useState(false)
+  const [customBranch, setCustomBranch] = useState('')
+  const [sectionOtherMode, setSectionOtherMode] = useState(false)
+  const [customSection, setCustomSection] = useState('')
 
   const handleChange = (field: keyof ManualFormData, value: string) => {
     setFormError(null);
@@ -165,6 +169,17 @@ export default function AddData() {
       return;
     }
 
+    const resPhone = formData.res_contact.trim()
+    if (resPhone && !/^\d{10}$/.test(resPhone)) {
+      setFormError("Residential phone must be exactly 10 digits.")
+      return
+    }
+    const curPhone = formData.cur_contact.trim()
+    if (curPhone && !/^\d{10}$/.test(curPhone)) {
+      setFormError("Current phone must be exactly 10 digits.")
+      return
+    }
+
     setRegistering(true);
     setFormError(null);
 
@@ -182,6 +197,10 @@ export default function AddData() {
         setSuccessMsg(`Registered! ID: ${regId}`);
         setFormData({ ...EMPTY_FORM });
         setSameAddress(false);
+        setBranchOtherMode(false)
+        setCustomBranch('')
+        setSectionOtherMode(false)
+        setCustomSection('')
       } else {
         setFormError(result.error || 'Registration failed.');
       }
@@ -276,16 +295,35 @@ export default function AddData() {
                 <Field>
                   <FieldLabel>Branch *</FieldLabel>
                   <Select
-                    value={formData.branch}
-                    onChange={(e) => handleChange("branch", e.target.value)}
+                    value={branchOtherMode ? '__other__' : formData.branch}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      if (val === '__other__') {
+                        setBranchOtherMode(true)
+                        handleChange('branch', '')
+                      } else {
+                        setBranchOtherMode(false)
+                        handleChange('branch', val)
+                      }
+                    }}
                   >
                     <option value="">Select branch</option>
                     {BRANCH_OPTIONS.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
+                      <option key={b} value={b}>{b}</option>
                     ))}
+                    <option value="__other__">Other (type your own)...</option>
                   </Select>
+                  {branchOtherMode && (
+                    <Input
+                      className="mt-2"
+                      placeholder="Type branch name..."
+                      value={customBranch}
+                      onChange={(e) => {
+                        setCustomBranch(e.target.value)
+                        handleChange('branch', e.target.value)
+                      }}
+                    />
+                  )}
                 </Field>
                 <Field>
                   <FieldLabel>Year of Study *</FieldLabel>
@@ -372,7 +410,7 @@ export default function AddData() {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>Email / Phone</FieldLabel>
+                  <FieldLabel>Phone</FieldLabel>
                   <Input
                     value={formData.res_contact}
                     onChange={(e) =>
@@ -425,7 +463,7 @@ export default function AddData() {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>Email / Phone</FieldLabel>
+                  <FieldLabel>Phone</FieldLabel>
                   <Input
                     value={formData.cur_contact}
                     onChange={(e) =>
@@ -464,18 +502,35 @@ export default function AddData() {
                 <Field>
                   <FieldLabel>Section Posted *</FieldLabel>
                   <Select
-                    value={formData.section_posted}
-                    onChange={(e) =>
-                      handleChange("section_posted", e.target.value)
-                    }
+                    value={sectionOtherMode ? '__other__' : formData.section_posted}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      if (val === '__other__') {
+                        setSectionOtherMode(true)
+                        handleChange('section_posted', '')
+                      } else {
+                        setSectionOtherMode(false)
+                        handleChange('section_posted', val)
+                      }
+                    }}
                   >
                     <option value="">Select section</option>
                     {SECTION_OPTIONS.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
+                      <option key={s} value={s}>{s}</option>
                     ))}
+                    <option value="__other__">Other (type your own)...</option>
                   </Select>
+                  {sectionOtherMode && (
+                    <Input
+                      className="mt-2"
+                      placeholder="Type section name..."
+                      value={customSection}
+                      onChange={(e) => {
+                        setCustomSection(e.target.value)
+                        handleChange('section_posted', e.target.value)
+                      }}
+                    />
+                  )}
                 </Field>
               </div>
             </div>

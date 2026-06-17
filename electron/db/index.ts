@@ -356,6 +356,14 @@ export function insertManualIntern(row: InternRow): number {
   return 1
 }
 
+export function deleteIntern(id: number): boolean {
+  const database = getDb()
+  database.prepare('DELETE FROM intern_feedback WHERE id = ?').run(id)
+  const stmt = database.prepare('DELETE FROM interns WHERE id = ?')
+  const result = stmt.run(id)
+  return result.changes > 0
+}
+
 function runMigrations(db: DatabaseSync): void {
   db.exec(`
     CREATE TABLE IF NOT EXISTS interns (

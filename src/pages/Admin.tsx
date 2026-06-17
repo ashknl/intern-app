@@ -4,11 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Users from './admin/Users'
 import SigningOfficers from './admin/SigningOfficers'
 import FeedbackDetails from './admin/FeedbackDetails'
+import ManageStudents from './admin/ManageStudents'
 
 const TABS = [
   { id: 'users', label: 'Users', component: Users },
   { id: 'officers', label: 'Signing Officers', component: SigningOfficers },
   { id: 'feedback', label: 'Add Feedback for students', component: FeedbackDetails },
+  { id: 'students', label: 'Manage Students', component: ManageStudents },
 ]
 
 export default function Admin() {
