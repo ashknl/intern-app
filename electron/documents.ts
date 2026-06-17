@@ -152,6 +152,7 @@ async function generatePDF(html: string): Promise<Buffer> {
   const pdfData = await pdfWindow.webContents.printToPDF({
     printBackground: true,
     preferCSSPageSize: true,
+    pageSize:"A4"
   })
 
   pdfWindow.close()
