@@ -1,310 +1,288 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Certificate</title>
 
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-      *:not(dialog) {
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate</title>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    *:not(dialog) {
+      margin: 0;
+    }
+
+    body {
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img, picture, video, canvas, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    input, button, textarea, select {
+      font: inherit;
+    }
+
+    p, h1, h2, h3, h4, h5, h6 {
+      overflow-wrap: break-word;
+    }
+
+    p { text-wrap: pretty; }
+    h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+
+    /* ── PAGE ── */
+    html, body {
+      height: 297mm;
+    }
+
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background: #fff;
+      color: #000;
+      width: 210mm;
+      height: 297mm;
+      overflow: hidden;
+      margin: 0 auto;
+      padding: 10mm 16mm 8mm;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 210mm;
+        height: 297mm;
+        padding: 10mm 16mm 8mm;
         margin: 0;
+        overflow: hidden;
       }
+    }
 
-      @media (prefers-reduced-motion: no-preference) {
-        html {
-          interpolate-size: allow-keywords;
-        }
-      }
+    /* ── HEADER ── */
+    .header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
 
-      body {
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
-      }
+    .left-section {
+      flex: 1;
+      font-size: 9.5pt;
+      line-height: 1.45;
+      text-align: left;
+    }
 
-      img,
-      picture,
-      video,
-      canvas,
-      svg {
-        display: block;
-        max-width: 100%;
-      }
+    .right-section {
+      flex: 1;
+      font-size: 9.5pt;
+      line-height: 1.45;
+      text-align: right;
+    }
 
-      input,
-      button,
-      textarea,
-      select {
-        font: inherit;
-      }
+    .image {
+      flex: 0 0 90px;
+      text-align: center;
+    }
 
-      p,
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        overflow-wrap: break-word;
-      }
-      p {
-        text-wrap: pretty;
-      }
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        text-wrap: balance;
-      }
+    .image img {
+      width: 90px;
+      height: auto;
+      margin: 0 auto;
+    }
 
-      #root,
-      #__next {
-        isolation: isolate;
-      }
+    /* ── DIVIDERS ── */
+    .line-break {
+      width: 100%;
+      border: none;
+      border-top: 0.5px solid #000;
+      margin: 3px 0 2px;
+      flex-shrink: 0;
+    }
 
-      /* ── PAGE ── */
-      body {
-        font-family: "Times New Roman", Times, serif;
-        background: #fff;
-        color: #000;
-        width: 270mm;
-        min-height: 297mm;
-        margin: 0 auto;
-        padding: 14mm 18mm 12mm;
-      }
+    .line-break-text-container {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8.5pt;
+      padding: 1px 0;
+      flex-shrink: 0;
+    }
 
-      /* ── HEADER ── */
-      .header {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 6px;
-      }
+    /* ── CONTENT ── */
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin-top: 6px;
+    }
 
-      .left-section {
-        flex: 1;
-        font-size: 11pt;
-        line-height: 1.55;
-        text-align: left;
-      }
+    .title-header h3 {
+      text-align: center;
+      font-size: 11pt;
+      margin-bottom: 6px;
+    }
 
-      .right-section {
-        flex: 1;
-        font-size: 11pt;
-        line-height: 1.55;
-        text-align: right;
-      }
+    .date-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 10pt;
+    }
 
-      .image {
-        flex: 0 0 110px;
-        text-align: center;
-      }
+    .letter-content {
+      font-family: "Times New Roman", serif;
+      font-size: 11pt;
+      line-height: 1.42;
+      flex: 1;
+    }
 
-      .image img {
-        width: 110px;
-        height: auto;
-        margin: 0 auto;
-      }
+    .letter-content > p {
+      margin-bottom: 0;
+    }
 
-      /* ── DIVIDERS ── */
-      .line-break {
-        width: 100%;
-        border: none;
-        border-top: 0.5px solid #000;
-        margin: 4px 0 2px;
-      }
+    .letter-body p {
+      margin-bottom: 20px;
+      text-align: justify;
+    }
 
-      .line-break-text-container {
-        display: flex;
-        justify-content: space-between;
-        font-size: 9.5pt;
-        padding: 2px 0;
-      }
+    .letter-body p:last-child {
+      margin-bottom: 0;
+    }
 
-      /* ── CONTENT ── */
-      .content {
-        width: 100%;
-        padding: 0;
-        padding-bottom: 3rem;
-      }
+    .spacer-sm {
+      display: block;
+      height: 5px;
+    }
 
-      .content-body {
-        margin-bottom:10vh;
-      }
+    .signature {
+      text-align: right;
+      margin-top: 12px;
+      font-size: 10.5pt;
+    }
 
-      .content-body p {
-        font-family: "Times New Roman", serif;
-        font-size: 13pt;
-        line-height: 1.5;
-      }
+    .signature-gap {
+      display: block;
+      height: 28px;
+    }
 
-      .content-body h3 {
-        text-align: center;
-        margin-bottom: 1rem;
-      }
+    /* ── FOOTER ── */
+    .footer {
+      width: 100%;
+      margin-top: auto;
+      padding-top: 4px;
+      text-align: center;
+      flex-shrink: 0;
+    }
 
-      .date-line {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-      }
+    .footer p {
+      font-size: 7.5pt;
+      line-height: 1.4;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
 
-      .letter-body p {
-        margin-bottom:10px;
+<body>
+  <div class="header">
+    <div class="left-section">
+      <p>Ordnance Factory Badmal</p>
+      <p>Unit of Munitions India Limited</p>
+      <p>Govt. Of India Enterprise</p>
+      <p>Ministry Of Defence</p>
+      <p>Badmal, Balangir(Odisha) - 767070</p>
+    </div>
+    <div class="image">
+      <img src="{{logo}}" alt="" />
+    </div>
+    <div class="right-section">
+      <p>आयुध निर्माणी वड़माल</p>
+      <p>म्यूनिशंस इंडिया लिमिटेड की इकाई</p>
+      <p>भारत सरकार का उद्यम</p>
+      <p>रक्षा मंत्रालय</p>
+      <p>वड़माल बलांगीरओडिशा-767070</p>
+    </div>
+  </div>
 
-      }
+  <hr class="line-break" />
+  <div class="line-break-text-container">
+    <span><b>फ़ोन </b> / Phone: 06655-250 969 - 973</span>
+    <span><b>फ़ैक्स</b> / FAX: 06655-250 561/250271</span>
+    <span><b>ईमेल </b> / email: gm_ofbol@ord.gov.in</span>
+  </div>
+  <hr class="line-break" />
 
-      /* ── FOOTER ── */
-      .footer {
-        width: 100%;
-        padding-top: 1.5rem;
-        text-align: center;
-      }
-
-      .footer p {
-        font-size: 9pt;
-        line-height: 1.5;
-        margin-bottom: 2px;
-      }
-
-      
-
-      @media print {
-        body {
-          margin: 0;
-          padding: 14mm 18mm 12mm;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <div class="left-section">
-        <p>Ordnance Factory Badmal</p>
-        <p>Unit of Munitions India Limited</p>
-        <p>Govt. Of India Enterprise</p>
-        <p>Ministry Of Defence</p>
-        <p>Badmal, Balangir(Odisha) - 767070</p>
-      </div>
-      <div class="image">
-        <img src="{{logo}}" alt="" />
-      </div>
-      <div class="right-section">
-        <p>आयुध निर्माणी वड़माल</p>
-        <p>म्यूनिशंस इंडिया लिमिटेड की इकाई</p>
-        <p>भारत सरकार का उद्यम</p>
-        <p>रक्षा मंत्रालय</p>
-        <p>वड़माल बलांगीरओडिशा-767070</p>
-      </div>
+  <div class="content-body">
+    <div class="title-header">
+      <h3><b><u>OFFER OF INTERNSHIP</u></b></h3>
     </div>
 
-    <hr class="line-break" />
-    <div class="line-break-text-container">
-      <span class="line-break-text"
-        ><b>फ़ोन </b> / Phone: 06655-250 969 - 973</span
-      >
-      <span class="line-break-text"
-        ><b>फ़ैक्स</b> / FAX: 06655-250 561/250271</span
-      >
-      <span class="line-break-text"
-        ><b>ईमेल </b> / email: gm_ofbol@ord.gov.in</span
-      >
+    <div class="date-line">
+      <div><u>No.:8017/GA/(SER)/HRD/INTERNSHIP/{{year-range}}/{{serial}}</u></div>
+      <div><u>Date:{{generation_date}}</u></div>
     </div>
-    <hr class="line-break" />
 
-    <div class="content-body">
-      <div class="title-header">
-        <h3>
-          <b><u>OFFER OF INTERNSHIP</u></b>
-        </h3>
+    <div class="letter-content">
+      <p>To,</p>
+      <p>{{gender_designation}} {{name}}</p>
+      <p>{{university}}</p>
+
+      <span class="spacer-sm"></span>
+
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sub: Offer Of Internship with Munitions India Limited (MIL)</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ref: Your Application on dated {{application_date}}</p>
+
+      <span class="spacer-sm"></span>
+
+      <div class="letter-body">
+        <p>Dear {{gender_designation}} {{last_name}},</p>
+        <p>&nbsp;&nbsp;&nbsp; With reference to your application dated {{application_date}} and recommendation from your College/University vide latter dated {{noc_date}} ; Munitions India Limited (MIL), a Defence, Public Sector Enterprise, Under Ministry of Defence, Government of India, is pleased to offer you an opportunity to undergo internship at Ordnance Factory, Badmal.</p>
+
+        <p>The internship shall commence on {{start_date}} and shall conclude on {{end_date}}. This internship shall be governed strictly by the terms and conditions specified in the internship Agreement annexed herewith and shall be purely academic and non-remunerative in nature.</p>
+
+        <p>You are required to report at HRD Section on {{start_date}} at 09:00 hrs.</p>
+
+        <p>Kindly sign and return the duplicate copy of this letter along with the Internship Agreement in token of acceptance.</p>
       </div>
 
-      <div class="date-line">
-        <div class="align-left">
-          <u>No.:8017/GA/(SER)/HRD/INTERNSHIP/{{year-range}}/{{serial}}</u>
-        </div>
-        <div class="align-right"><u>Date:{{generation_date}}</u></div>
-      </div>
+      <br>
+      <br>
+      <br>
+      <br>
 
-      <div class="letter-content">
-        <p>To,</p>
-        <p>{{gender_designation}} {{name}}</p>
-        <p>{{university}}</p>
-
-        <br />
-        <p>
-          &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; Sub: offer Of Internship with
-          Munitions India Limited (MIL)
-        </p>
-        <p>
-          &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; Ref: Your Application on
-          dated {{application_date}}
-        </p>
-        <br />
-        <div class="letter-body">
-          <p>Dear {{gender_designation}} {{last_name}},</p>
-          <p>
-            &nbsp; &nbsp; With reference to your application dated
-            {{application_date}} and recommendation from your College/University
-            vide latter dated {{noc_date}} ; Munitions India Limited (MIL), a
-            Defence, Public Sector Enterprise, Under Ministry of Defence,
-            Government of India, is pleased to offer you an opportunity to
-            undergo internship at Ordnance Factory, Badmal.
-          </p>
-
-          <p>
-            The internship shall commence on {{start_date}} and shall conclude
-            on {{end_date}}. This internship shall be governed strictly by the
-            terms and conditions specified in the internship Agreement annexed
-            herewith and shall be purely academic and non-remunerative in
-            nature.
-          </p>
-
-          <p>
-            You are required to report at HRD Section on {{start_date}} at 09:00
-            hrs.
-          </p>
-
-          <p>
-            Kindly sign and return the duplicate copy of this letter along with
-            the Internship Agreement in token of acceptance.
-          </p>
-        </div>
-
-        <div style="text-align: right">
-          <p>For Munitions India Limited</p>
-          <br>
-          <br>
-          <p>{{signing_officer_name}}</p>
-          <p>{{signing_officer_designation}}</p>
-        </div>
+      <div class="signature">
+        <p>For Munitions India Limited</p>
+        <span class="signature-gap"></span>
+        <p>{{signing_officer_name}}</p>
+        <p>{{signing_officer_designation}}</p>
       </div>
     </div>
-    <hr class="line-break" />
+  </div>
 
-    <section class="footer">
-      <p>CIN No.U29190PN2021GOI203505</p>
-      <p>पंजीकृतपता: गोलाबारूदनिर्माणीखड़की, पुणे–४११००३(महाराष्ट्र)</p>
-      <p>Regd.Address:Ammunition Factory, Khadki, Pune –411003 (Maharashtra)</p>
-      <p>
-        निगमितकार्यालयपता : दूसरीमंजिल, न्यातियुनिट्री, नगररोड, येरवडा,
-        पुणे–४११००६(महाराष्ट्र)
-      </p>
-      <p>
-        Corporate Office Address: 2nd Floor, NyatiUnitree,Nagar Road, Yerwada,
-        Pune- 411006 (Maharashtra)
-      </p>
-      <p>
-        दूरभाषसं /Phone No.020-67080400, Email ID : mil-pune@munitionsindia.in
-        website – https://munitionsindia.in
-      </p>
-    </section>
-  </body>
+  <section class="footer">
+    <hr class="line-break" />
+    <p>CIN No.U29190PN2021GOI203505</p>
+    <p>पंजीकृतपता: गोलाबारूदनिर्माणीखड़की, पुणे–४११००३(महाराष्ट्र)</p>
+    <p>Regd. Address: Ammunition Factory, Khadki, Pune –411003 (Maharashtra)</p>
+    <p>निगमितकार्यालयपता : दूसरीमंजिल, न्यातियुनिट्री, नगररोड, येरवडा, पुणे–४११००६(महाराष्ट्र)</p>
+    <p>Corporate Office Address: 2nd Floor, NyatiUnitree, Nagar Road, Yerwada, Pune- 411006 (Maharashtra)</p>
+    <p>दूरभाषसं /Phone No.020-67080400, Email ID : mil-pune@munitionsindia.in &nbsp; website – https://munitionsindia.in</p>
+  </section>
+</body>
+
 </html>

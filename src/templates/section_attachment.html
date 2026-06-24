@@ -77,11 +77,19 @@
             font-family: "Times New Roman", Times, serif;
             background: #fff;
             color: #000;
-            width: 270mm;
+            width: 210mm;
             min-height: 297mm;
+            overflow: hidden;
             margin: 0 auto;
-            padding: 14mm 18mm 12mm;
+            display: flex;
+            flex-direction: column;
         }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
 
         /* ── LETTERHEAD ── */
         .letterhead {
@@ -135,7 +143,7 @@
         /* ── DOCUMENT HEADER (centered GA/HRD section title) ── */
         .doc-header {
             text-align: center;
-            margin: 10px 0 8px;
+            margin-bottom:2px;
         }
 
         .doc-header p {
@@ -174,16 +182,16 @@
         .triple-equal {
             text-align: center;
             font-size: 13pt;
-            margin: 8px 0 14px;
+            margin: 4px 0 4px;
             letter-spacing: 4px;
         }
 
         /* ── BODY TEXT ── */
         .body-text {
-            font-size: 12pt;
-            line-height: 1.6;
+            font-size: 11pt;
+            line-height: 1.5;
             text-align: justify;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
         /* ── INTERNSHIP TABLE ── */
@@ -191,7 +199,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 11.5pt;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .internship-table th,
@@ -223,33 +231,32 @@
         /* ── SIGNATURE BLOCK ── */
         .signature-block {
             text-align: right;
-            margin: 24px 0 30px;
+            margin: 12px 0 12px;
             font-size: 12pt;
             line-height: 1.8;
         }
 
         /* ── TO / COPY SECTION ── */
         .to-block {
-            font-size: 12pt;
+            font-size: 11pt;
             font-weight: bold;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             line-height: 1.6;
         }
 
         .copy-section {
-            font-size: 12pt;
-            margin-bottom: 6px;
+            font-size: 11pt;
+            margin-bottom: 3px;
         }
 
         .copy-section p {
             font-weight: bold;
-            margin-bottom: 6px;
         }
 
         .copy-item {
-            font-size: 12pt;
+            font-size: 11pt;
             line-height: 1.7;
-            margin-bottom: 10px;
+            margin-bottom: 2px;
         }
 
         .copy-item .sub-item {
@@ -284,7 +291,7 @@
 <body>
 
     <!-- ── LETTERHEAD ── -->
-    <div class="letterhead">
+    <!-- <div class="letterhead">
         <div class="left-section">
             <p>Ordnance Factory Badmal</p>
             <p>Unit of Munitions India Limited</p>
@@ -302,15 +309,15 @@
             <p>रक्षा मंत्रालय</p>
             <p>वड़माल बलांगीर, ओडिशा-767070</p>
         </div>
-    </div>
+    </div> -->
 
-    <hr class="line-break" />
+    <!-- <hr class="line-break" />
     <div class="line-break-text-container">
         <span><b>फ़ोन </b> / Phone: 06655-250 969 - 973</span>
         <span><b>फ़ैक्स</b> / FAX: 06655-250 561/250271</span>
         <span><b>ईमेल </b> / email: gm_ofbol@ord.gov.in</span>
     </div>
-    <hr class="line-break" />
+    <hr class="line-break" /> -->
 
     <!-- ── DOCUMENT HEADER ── -->
     <div class="doc-header">
@@ -410,20 +417,9 @@
             <p>b. &nbsp; You are advised not to carry any CD/Pen Drive/Mobile Phone/objectionable electronic
                 device within the factory premises failing which disciplinary action as deemed fit will be
                 initiated against you.</p>
-            <p>b. &nbsp; All other terms and condition as per rules will remain intact.</p>
+            <p>c. &nbsp; All other terms and condition as per rules will remain intact.</p>
         </div>
     </div>
-
-    <!-- ── FOOTER ── -->
-    <section class="footer">
-        <p>CIN No.U29190PN2021GOI203505</p>
-        <p>पंजीकृत पता: गोलाबारूद निर्माणी खड़की, पुणे–४११००३ (महाराष्ट्र)</p>
-        <p>Regd. Address: Ammunition Factory, Khadki, Pune – 411003 (Maharashtra)</p>
-        <p>निगमित कार्यालय पता : दूसरी मंजिल, न्यातियुनिट्री, नगर रोड, येरवडा, पुणे–४११००६ (महाराष्ट्र)</p>
-        <p>Corporate Office Address: 2nd Floor, NyatiUnitree, Nagar Road, Yerwada, Pune- 411006 (Maharashtra)</p>
-        <p>दूरभाष सं / Phone No. 020-67080400, Email ID : mil-pune@munitionsindia.in &nbsp; website –
-            https://munitionsindia.in</p>
-    </section>
 
 </body>
 
